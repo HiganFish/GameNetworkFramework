@@ -36,6 +36,10 @@
     <IncludePath>C:\Data\CPP\asio-1.20.0\include;C:\Data\CPP\GameProject\GameServer;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Data\CPP\GameProject\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Data\CPP\asio-1.20.0\include;C:\Data\CPP\GameProject\GameServer;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Data\CPP\GameProject\x64\Release;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -116,6 +120,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

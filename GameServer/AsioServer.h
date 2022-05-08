@@ -69,7 +69,7 @@ private:
 
     std::unordered_map<std::string, TcpConnectionPtr> tcp_connection_map_;
 
-    void OnNewClient(tcp::socket socket)
+    awaitable<void> OnNewClient(tcp::socket socket)
     {
         try
         {
@@ -88,6 +88,7 @@ private:
         {
             std::printf("echo Exception: %s\n", e.what());
         }
+        co_return;
     }
 
     awaitable<void> Listener()
@@ -98,7 +99,7 @@ private:
         for (;;)
         {
             tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
-            OnNewClient(std::move(socket));
+            co_spawn(socket.get_executor(), OnNewClient(std::move(socket)), detached);
         }
     }
 

@@ -29,6 +29,9 @@ TEST(Message, MessageCodec)
 	}
 }
 
+static int PACK_SUM = 100 * 10000;
+static int THREAD_NUM = 10000;
+
 int FooMain(GameServer& game_server, bool& running)
 {
 	// bool running = true;
@@ -64,7 +67,23 @@ int FooMain(GameServer& game_server, bool& running)
 					ControlMessagePtr message_ptr =
 						std::make_shared<ControlMessage>(std::move(*ptr->base_message_ptr));
 					// BaseMessagePtr message_ptr = SpawnNewMessage<ControlMessage>(*ptr->base_message_ptr);
-					std::cout << std::format("{}{}", message_ptr->DebugMessage(), CRLF);
+					// std::cout << std::format("{}{}", message_ptr->DebugMessage(), CRLF);
+
+					static std::atomic_int number = 0;
+					static std::chrono::time_point begin_time = std::chrono::system_clock::now();
+					static std::chrono::time_point end_time = std::chrono::system_clock::now();
+					number++;
+					if (number == 1)
+					{
+						begin_time = std::chrono::system_clock::now();
+					}
+					if (number == PACK_SUM)
+					{
+						end_time = std::chrono::system_clock::now();
+						std::cout << "cost " << 
+							std::chrono::duration_cast<std::chrono::milliseconds>(end_time - begin_time).count() <<
+							std::endl;
+					}
 				}
 			}
 		});
@@ -105,11 +124,19 @@ TEST(GameServer, RecvMsg)
 	asio::io_context context;
 	asio::ip::tcp::socket socket(context);
 	asio::ip::tcp::resolver resolver(context);
-	asio::connect(socket, resolver.resolve("127.0.0.1", "40000"));
-
-	for (int i = 0; i < 10; ++i)
+	auto endpoint = resolver.resolve("127.0.0.1", "40000");
+	std::vector< asio::ip::tcp::socket> socket_vec;
+	for (int i = 0; i < THREAD_NUM; ++i)
 	{
-		socket.send(asio::buffer(buffer.ReadBegin(), buffer.ReadableSize()));
+		socket_vec.emplace_back(context);
+		asio::connect(socket_vec[i], endpoint);
+	}
+	std::cout << "begin send " << std::endl;
+
+	for (int i = 0; i < PACK_SUM; ++i)
+	{
+		asio::async_write(socket_vec[i % THREAD_NUM], asio::buffer(buffer.ReadBegin(), buffer.ReadableSize()),
+			[](const asio::error_code& ec, size_t length) {});
 	}
 	
 	std::this_thread::sleep_for(std::chrono::seconds(5));

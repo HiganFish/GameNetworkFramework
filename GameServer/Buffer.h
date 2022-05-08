@@ -67,7 +67,7 @@ public:
 		assert(read_idx_ >= length);
 		read_idx_ -= length;
 		const char* d = static_cast<const char*>(data);
-		std::copy(d, d + length, buffer_.begin() + read_idx_);
+		std::copy(d, d + length, Begin() + read_idx_);
 	}
 
 	template <typename T>
@@ -99,6 +99,11 @@ protected:
 
 private:
 	void Swap(size_t& lhs, size_t& rhs);
+
+	char* Begin()
+	{
+		return buffer_.data();
+	}
 };
 
 

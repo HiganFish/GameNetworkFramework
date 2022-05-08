@@ -22,6 +22,9 @@
     <Filter Include="network">
       <UniqueIdentifier>{1af8dd01-9a55-4da4-a65d-a0c7d99242df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dispatch">
+      <UniqueIdentifier>{09bc84ac-ec42-4f29-a0ae-e168189a994d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseMessage.cpp">

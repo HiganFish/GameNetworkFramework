@@ -55,8 +55,8 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 		}
 		else
 		{
-			std::cout << std::format("{} - a new message, {}{}", connection_name_,
-				message_ptr->DebugMessage(), CRLF);
+			// std::cout << std::format("{} - a new message, {}{}", connection_name_,
+				// message_ptr->DebugMessage(), CRLF);
 
 			if (on_new_msg_with_id_func_)
 			{

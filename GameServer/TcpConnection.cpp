@@ -12,7 +12,7 @@ void TcpConnection::AsyncWaitData()
         {
             if (ec)
             {
-                std::cout << "read data error, " << ec.message() << std::endl;
+                // std::cout << "read data error, " << ec.message() << std::endl;
                 // TODO handle error close connection
                 return;
             }
