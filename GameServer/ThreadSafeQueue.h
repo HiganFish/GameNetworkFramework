@@ -1,0 +1,52 @@
+#pragma once
+
+#include <queue>
+#include <mutex>
+
+template <typename T>
+class ThreadSafeQueue
+{
+public:
+	ThreadSafeQueue() = default;
+	~ThreadSafeQueue() = default;
+
+	ThreadSafeQueue(const ThreadSafeQueue&) = delete;
+	ThreadSafeQueue& operator=(const ThreadSafeQueue&) = delete;
+
+	void Push(T&& t)
+	{
+		std::lock_guard guard(queue_mutex_);
+		deque_.push_back(std::forward<T>(t));
+		cond_.notify_one();
+	}
+
+	T Pop()
+	{
+		std::unique_lock lock(queue_mutex_);
+		while (deque_.empty())
+		{
+			cond_.wait(lock);
+		}
+		T t = deque_.front();
+		deque_.pop_front();
+		return t;
+	}
+
+	bool TryPop(T& t)
+	{
+		std::unique_lock lock(queue_mutex_);
+		if (deque_.empty())
+		{
+			return false;
+		}
+		t = std::move(deque_.front());
+		deque_.pop_front();
+		return true;
+	}
+
+
+private:
+	std::mutex queue_mutex_;
+	std::condition_variable  cond_;
+	std::deque<T> deque_;
+};

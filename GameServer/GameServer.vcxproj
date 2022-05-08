@@ -149,7 +149,6 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="GameConnection.cpp" />
     <ClCompile Include="GameServer.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="TcpConnection.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,8 +159,11 @@
     <ClInclude Include="ControlMessage.h" />
     <ClInclude Include="GameConnection.h" />
     <ClInclude Include="GameServer.h" />
+    <ClInclude Include="Messages.h" />
     <ClInclude Include="MessageUtils.h" />
+    <ClInclude Include="NetworkCommon.h" />
     <ClInclude Include="TcpConnection.h" />
+    <ClInclude Include="ThreadSafeQueue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

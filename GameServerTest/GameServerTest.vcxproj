@@ -33,7 +33,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Data\CPP\GameProject\GameServer;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Data\CPP\asio-1.20.0\include;C:\Data\CPP\GameProject\GameServer;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Data\CPP\GameProject\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemGroup>

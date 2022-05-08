@@ -48,6 +48,11 @@ public:
         }
     }
 
+    void Stop()
+    {
+        io_context_.stop();
+    }
+
     virtual void OnNewTcpConnection(const TcpConnectionPtr& connection)
     {
     }
@@ -62,6 +67,8 @@ private:
     short port_;
     asio::io_context io_context_;
 
+    std::unordered_map<std::string, TcpConnectionPtr> tcp_connection_map_;
+
     void OnNewClient(tcp::socket socket)
     {
         try
@@ -70,8 +77,11 @@ private:
             stream << server_name_ << "#" << socket.remote_endpoint();
             // 注意move后 socket不能再次使用
             auto connection_ptr = std::make_shared<TcpConnection>(std::move(socket));
-            connection_ptr->SetConnectionName(stream.str());
-      
+
+            std::string connection_name = stream.str();
+            connection_ptr->SetConnectionName(connection_name);
+            tcp_connection_map_[connection_name] = connection_ptr;
+
             OnNewTcpConnection(connection_ptr);
         }
         catch (std::exception& e)

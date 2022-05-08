@@ -5,6 +5,7 @@
 #include <format>
 #include <unordered_map>
 #include "MessageUtils.h"
+#include "NetworkCommon.h"
 
 enum class MessageType : uint8_t
 {
@@ -63,10 +64,14 @@ private:
 	virtual void DecodeBody() { }
 };
 
-
-using BaseMessagePtr = std::shared_ptr<BaseMessage>;
 template <typename T, typename...Args>
 BaseMessagePtr SpawnNewMessage(Args&&...args)
 {
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }
+
+struct BaseMsgWithRoleId
+{
+	ROLE_ID role_id;
+	BaseMessagePtr base_message_ptr;
+};

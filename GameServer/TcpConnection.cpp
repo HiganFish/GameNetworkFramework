@@ -24,39 +24,34 @@ void TcpConnection::AsyncWaitData()
                 buffer_.AdjustBuffer();
             }
 
-            bool enought = true;
-            while (enought)
+            if (on_new_data_func_)
             {
-                auto [ok, decode_size] = DecodeBufferData();
-                if (!ok)
-                {
-                    // TODO handle error close connection
-                    return;
-                }
-                if (decode_size == 0)
-                {
-                    enought = false;
-                }
+                on_new_data_func_(shared_from_this(), buffer_);
             }
             AsyncWaitData();
         });
 }
 
-std::pair<bool, size_t> TcpConnection::DecodeBufferData()
+void TcpConnection::AsyncSendData(const char* data, size_t length)
 {
-    auto message_ptr = SpawnNewMessage<BaseMessage>();
-    auto [ok, length] = message_ptr->DecodeMessage(buffer_);
-    if (!ok)
-    {
-        std::cout << "decode error" << std::endl; 
-        return {false, 0};
-    }
-
-    if (length > 0 && on_new_message_)
-    {
-        on_new_message_(message_ptr);
-    }
-
-    return { true, length };
+    asio::async_write(socket_, asio::buffer(data, length), 
+        [length](const asio::error_code& ec, size_t write_length)
+        {
+            assert(length == write_length);
+        });
 }
 
+void TcpConnection::SetOnNewDataFunc(const OnNewDataFunc& func)
+{
+    on_new_data_func_ = func;
+}
+
+void TcpConnection::SetConnectionName(const std::string& connection_name)
+{
+    connection_name_ = connection_name;
+}
+
+const std::string& TcpConnection::GetConnectionName() const
+{
+    return connection_name_;
+}

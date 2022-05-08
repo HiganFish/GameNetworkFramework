@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Buffer.h"
-
-constexpr int TINY_BUFFER_DEFAULT_BUFFER_SIZE = 64;
+#include "NetworkCommon.h"
 
 class TinyBuffer : public Buffer
 {

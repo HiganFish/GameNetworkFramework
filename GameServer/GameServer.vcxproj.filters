@@ -19,40 +19,28 @@
     <Filter Include="message">
       <UniqueIdentifier>{b24e03c5-a6e5-411d-ad6e-636251e4e74e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="network">
+      <UniqueIdentifier>{1af8dd01-9a55-4da4-a65d-a0c7d99242df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameConnection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TcpConnection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BaseMessage.cpp">
       <Filter>message</Filter>
     </ClCompile>
     <ClCompile Include="Buffer.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="GameConnection.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="GameServer.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="TcpConnection.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AsioServer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameConnection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameServer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TcpConnection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MessageUtils.h">
       <Filter>message</Filter>
     </ClInclude>
@@ -67,6 +55,27 @@
     </ClInclude>
     <ClInclude Include="ByteOrder.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="AsioServer.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="GameConnection.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServer.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="TcpConnection.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadSafeQueue.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkCommon.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="Messages.h">
+      <Filter>message</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
