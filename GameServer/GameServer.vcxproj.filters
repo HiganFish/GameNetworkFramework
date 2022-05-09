@@ -42,6 +42,12 @@
     <ClCompile Include="TcpConnection.cpp">
       <Filter>network</Filter>
     </ClCompile>
+    <ClCompile Include="MsgThread.cpp">
+      <Filter>dispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="MsgDispatcher.cpp">
+      <Filter>dispatch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MessageUtils.h">
@@ -79,6 +85,12 @@
     </ClInclude>
     <ClInclude Include="Messages.h">
       <Filter>message</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgThread.h">
+      <Filter>dispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgDispatcher.h">
+      <Filter>dispatch</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

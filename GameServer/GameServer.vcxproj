@@ -151,6 +151,8 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="GameConnection.cpp" />
     <ClCompile Include="GameServer.cpp" />
+    <ClCompile Include="MsgDispatcher.cpp" />
+    <ClCompile Include="MsgThread.cpp" />
     <ClCompile Include="TcpConnection.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +165,8 @@
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="MessageUtils.h" />
+    <ClInclude Include="MsgDispatcher.h" />
+    <ClInclude Include="MsgThread.h" />
     <ClInclude Include="NetworkCommon.h" />
     <ClInclude Include="TcpConnection.h" />
     <ClInclude Include="ThreadSafeQueue.h" />

@@ -57,6 +57,12 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessage(Buffer& buffer)
 	READ_NUMBER(buffer, version);
 	READ_ENUM(buffer, message_type);
 
+	if (message_type <= MessageType::TYTE_MIN ||
+		message_type >= MessageType::TYPE_MAX)
+	{
+		return { false, 0 };
+	}
+
 	uint32_t body_size = pack_size - HEADER_SIZE_NO_LENGTH;
 	body_buffer.AppendData(buffer.ReadBegin(), body_size);
 	buffer.AddReadIndex(body_size);

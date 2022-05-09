@@ -9,8 +9,10 @@
 
 enum class MessageType : uint8_t
 {
-	DEFAULT = 0,
-	CONTROL = 20
+	TYTE_MIN = 0,
+	DEFAULT,
+	CONTROL,
+	TYPE_MAX
 };
 static std::string MessageTypeToString(MessageType type)
 {

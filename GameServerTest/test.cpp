@@ -3,6 +3,7 @@
 #include "ControlMessage.h"
 #include "GameServer.h"
 #include "ThreadSafeQueue.h"
+#include "MsgDispatcher.h"
 #include "Messages.h"
 
 TEST(Message, MessageCodec)
@@ -29,8 +30,8 @@ TEST(Message, MessageCodec)
 	}
 }
 
-static int PACK_SUM = 100 * 10000;
-static int THREAD_NUM = 10000;
+static int PACK_SUM = 100;
+static int THREAD_NUM = 10;
 
 int FooMain(GameServer& game_server, bool& running)
 {
@@ -39,7 +40,9 @@ int FooMain(GameServer& game_server, bool& running)
 
 	ThreadSafeQueue<BaseMsgWithRoleIdPtr> new_pack_queue;
 	ThreadSafeQueue<BaseMsgWithRoleIdPtr> wait_for_send_queue;
-	
+	MsgDispatcher msg_dispatcher_(5);
+	msg_dispatcher_.Start();
+
 	game_server.SetOnNewMsgWithIdFunc(
 		[&new_pack_queue](BaseMsgWithRoleIdPtr&& ptr)
 		{
@@ -57,19 +60,22 @@ int FooMain(GameServer& game_server, bool& running)
 			}
 		});
 	std::thread decode_thread(
-		[&running, &new_pack_queue]()
+		[&running, &new_pack_queue, &msg_dispatcher_]()
 		{
 			while (running)
 			{
 				BaseMsgWithRoleIdPtr ptr = new_pack_queue.Pop();
 				if (ptr->base_message_ptr->message_type == MessageType::CONTROL)
 				{
-					ControlMessagePtr message_ptr =
+					ptr->base_message_ptr =
 						std::make_shared<ControlMessage>(std::move(*ptr->base_message_ptr));
+					msg_dispatcher_.Push(std::move(ptr));
+
+
 					// BaseMessagePtr message_ptr = SpawnNewMessage<ControlMessage>(*ptr->base_message_ptr);
 					// std::cout << std::format("{}{}", message_ptr->DebugMessage(), CRLF);
 
-					static std::atomic_int number = 0;
+					/*static std::atomic_int number = 0;
 					static std::chrono::time_point begin_time = std::chrono::system_clock::now();
 					static std::chrono::time_point end_time = std::chrono::system_clock::now();
 					number++;
@@ -83,17 +89,18 @@ int FooMain(GameServer& game_server, bool& running)
 						std::cout << "cost " << 
 							std::chrono::duration_cast<std::chrono::milliseconds>(end_time - begin_time).count() <<
 							std::endl;
-					}
+					}*/
 				}
 			}
 		});
 	std::thread canncel_thread(
-		[&running, &game_server]()
+		[&running, &game_server, &msg_dispatcher_]()
 		{
 			while (running)
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds(500));
 			}
+			msg_dispatcher_.Stop();
 			game_server.Stop();
 		});
 
