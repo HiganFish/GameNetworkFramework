@@ -2,6 +2,7 @@
 
 #include <queue>
 #include <mutex>
+#include <chrono>
 
 template <typename T>
 class ThreadSafeQueue
@@ -32,12 +33,15 @@ public:
 		return t;
 	}
 
-	bool TryPop(T& t)
+	bool TryPop(T& t, const std::chrono::milliseconds& timeout = std::chrono::milliseconds(10))
 	{
 		std::unique_lock lock(queue_mutex_);
-		if (deque_.empty())
+		while (deque_.empty()) // 防止wait_for也会出现的虚假唤醒
 		{
-			return false;
+			if (cond_.wait_for(lock, timeout) == std::cv_status::timeout)
+			{
+				return false;
+			}
 		}
 		t = std::move(deque_.front());
 		deque_.pop_front();

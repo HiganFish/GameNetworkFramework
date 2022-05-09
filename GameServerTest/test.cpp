@@ -40,7 +40,7 @@ int FooMain(GameServer& game_server, bool& running)
 
 	ThreadSafeQueue<BaseMsgWithRoleIdPtr> new_pack_queue;
 	ThreadSafeQueue<BaseMsgWithRoleIdPtr> wait_for_send_queue;
-	MsgDispatcher msg_dispatcher_(5);
+	MsgDispatcher msg_dispatcher_(1);
 	msg_dispatcher_.Start();
 
 	game_server.SetOnNewMsgWithIdFunc(
@@ -53,10 +53,14 @@ int FooMain(GameServer& game_server, bool& running)
 		{
 			while (running)
 			{
-				BaseMsgWithRoleIdPtr ptr = wait_for_send_queue.Pop();
-				TinyBuffer buffer;
-				ptr->base_message_ptr->EncodeMessage(buffer);
-				game_server.SendMessageById(ptr->role_id, buffer.ReadBegin(), buffer.ReadableSize());
+				BaseMsgWithRoleIdPtr ptr;
+				bool has = wait_for_send_queue.TryPop(ptr);
+				if (has)
+				{
+					TinyBuffer buffer;
+					ptr->base_message_ptr->EncodeMessage(buffer);
+					game_server.SendMessageById(ptr->role_id, buffer.ReadBegin(), buffer.ReadableSize());
+				}
 			}
 		});
 	std::thread decode_thread(
@@ -64,7 +68,12 @@ int FooMain(GameServer& game_server, bool& running)
 		{
 			while (running)
 			{
-				BaseMsgWithRoleIdPtr ptr = new_pack_queue.Pop();
+				BaseMsgWithRoleIdPtr ptr;
+				bool has = new_pack_queue.TryPop(ptr);
+				if (!has)
+				{
+					continue;
+				}
 				if (ptr->base_message_ptr->message_type == MessageType::CONTROL)
 				{
 					ptr->base_message_ptr =
@@ -93,18 +102,15 @@ int FooMain(GameServer& game_server, bool& running)
 				}
 			}
 		});
-	std::thread canncel_thread(
-		[&running, &game_server, &msg_dispatcher_]()
-		{
-			while (running)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(500));
-			}
-			msg_dispatcher_.Stop();
-			game_server.Stop();
-		});
 
 	game_server.Start();
+	while (running)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+	msg_dispatcher_.Stop();
+	encode_thread.join();
+	decode_thread.join();
 
 	return 0;
 }
@@ -143,10 +149,16 @@ TEST(GameServer, RecvMsg)
 	for (int i = 0; i < PACK_SUM; ++i)
 	{
 		asio::async_write(socket_vec[i % THREAD_NUM], asio::buffer(buffer.ReadBegin(), buffer.ReadableSize()),
-			[](const asio::error_code& ec, size_t length) {});
+			[](const asio::error_code& ec, size_t length) {
+				if (ec)
+				{
+					std::cout << ec.message() << std::endl;
+				}
+			});
 	}
 	
-	std::this_thread::sleep_for(std::chrono::seconds(5));
-
+	std::this_thread::sleep_for(std::chrono::seconds(2));
+	game_server.Stop();
 	running = false;
+	t1.join();
 }

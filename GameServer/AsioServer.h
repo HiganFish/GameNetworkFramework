@@ -24,6 +24,7 @@ class AsioServer
 public:
 
     AsioServer(const std::string& server_name, short port):
+        started_(false),
         server_name_(server_name),
         port_(port)
     {
@@ -33,13 +34,15 @@ public:
     {
         try
         {
-            asio::io_context io_context_;
-
+            if (started_)
+            {
+                return;
+            }
+            started_ = true;
+            
             asio::signal_set signals(io_context_, SIGINT, SIGTERM);
             signals.async_wait([&](auto, auto) { io_context_.stop(); });
-
             co_spawn(io_context_, Listener(), detached);
-
             io_context_.run();
         }
         catch (std::exception& e)
@@ -50,6 +53,7 @@ public:
 
     void Stop()
     {
+        work_guard_.reset();
         io_context_.stop();
     }
 
@@ -62,11 +66,12 @@ public:
     }
 
 private:
-    
+    bool started_;
     std::string server_name_;
     short port_;
     asio::io_context io_context_;
-
+    asio::executor_work_guard<asio::io_context::executor_type> work_guard_{
+        asio::make_work_guard(io_context_)};
     std::unordered_map<std::string, TcpConnectionPtr> tcp_connection_map_;
 
     awaitable<void> OnNewClient(tcp::socket socket)
@@ -86,7 +91,7 @@ private:
         }
         catch (std::exception& e)
         {
-            std::printf("echo Exception: %s\n", e.what());
+            std::printf("Exception: %s\n", e.what());
         }
         co_return;
     }

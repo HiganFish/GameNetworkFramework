@@ -1,3 +1,4 @@
+#include <iostream>
 #include "MsgThread.h"
 
 MsgThread::MsgThread(bool& started, const DispathFunc& func) :
@@ -11,15 +12,19 @@ MsgThread::MsgThread(bool& started, const DispathFunc& func) :
 
 MsgThread::~MsgThread()
 {
-	Join();
+	if (started_)
+	{
+		Join();
+	}
 }
 
 void MsgThread::Running()
 {
 	while (started_)
 	{
-		BaseMsgWithRoleIdPtr msg_ptr = msg_queue_.Pop();
-		if (dispatch_func_)
+		BaseMsgWithRoleIdPtr msg_ptr;
+		bool has_pack = msg_queue_.TryPop(msg_ptr);
+		if (has_pack && dispatch_func_)
 		{
 			dispatch_func_(std::move(msg_ptr));
 		}
@@ -34,13 +39,5 @@ void MsgThread::Push(BaseMsgWithRoleIdPtr&& msg)
 void MsgThread::Join()
 {
 	assert(!started_);
-	if (thread_.joinable())
-	{
-		thread_.join();
-	}
-	else
-	{
-		thread_.detach();
-	}
-	
+	thread_.join();
 }
