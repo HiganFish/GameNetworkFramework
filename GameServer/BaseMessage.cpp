@@ -3,7 +3,7 @@
 #include "BaseMessage.h"
 
 BaseMessage::BaseMessage() :
-	magic(666666666),
+	magic(MAGIC),
 	version(0x00),
 	message_type(MessageType::DEFAULT)
 {
@@ -41,11 +41,13 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessage(Buffer& buffer)
 	}
 
 	PEEK_NUMBER(buffer, pack_size);
+	// 数据过大
 	if (pack_size > MAX_PACK_SIZE)
 	{
+		std::cout << "pack_size > MAX_PACK_SIZE" << std::endl;
 		return { false, 0 };
 	}
-	// data_size 不包含其本身大小
+	// data_size 不包含其本身大小 数据不足
 	if (buffer.ReadableSize() < pack_size + sizeof(pack_size))
 	{
 		return { true, 0 };
@@ -53,7 +55,14 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessage(Buffer& buffer)
 	buffer.AddReadIndex(sizeof(pack_size));
 
 
-	READ_NUMBER(buffer, magic);
+	PEEK_NUMBER(buffer, magic);
+	if (magic != MAGIC)
+	{
+		std::cout << "magic != MAGIC" << std::endl;
+		return { false, 0 };
+	}
+	buffer.AddReadIndex(sizeof(magic));
+
 	READ_NUMBER(buffer, version);
 	READ_ENUM(buffer, message_type);
 

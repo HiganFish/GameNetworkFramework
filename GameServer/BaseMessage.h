@@ -58,6 +58,7 @@ private:
 	// 不含pack_size的头部长度
 	const static int HEADER_SIZE_NO_LENGTH = sizeof(magic) +
 		sizeof(version) + sizeof(message_type);
+	const static int MAGIC = 0x11000011;
 
 	// 数据包长度 不含pack_size本身
 	// 位于序列化后数据的起始位置
