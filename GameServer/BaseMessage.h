@@ -12,13 +12,15 @@ enum class MessageType : uint8_t
 	TYTE_MIN = 0,
 	DEFAULT,
 	CONTROL,
+	PLAYER_INIT,
 	TYPE_MAX
 };
 static std::string MessageTypeToString(MessageType type)
 {
 	static std::unordered_map<MessageType, std::string> enumMap
 	{ {MessageType::DEFAULT, "DEFAULT"},
-		{MessageType::CONTROL, "CONTROL"}};
+	{MessageType::PLAYER_INIT, "PLAYER_INIT"},
+	{MessageType::CONTROL, "CONTROL"}};
 
 	auto iter = enumMap.find(type);
 	return iter == enumMap.end() ? "UNKNOWN" : iter->second;
@@ -78,3 +80,10 @@ struct BaseMsgWithRoleId
 	ROLE_ID role_id;
 	BaseMessagePtr base_message_ptr;
 };
+
+#define DECODE_CONSTRUCTOR(class_name) class_name \
+(BaseMessage&& base_message): BaseMessage(std::move(base_message)) {DecodeBody();}
+
+#define ENCODE_DATA_FUNC virtual void EncodeData(Buffer& buffer) override
+#define DECODE_DATA_FUNC virtual void DecodeBody() override
+#define DEBUG_MSG_FUNC std::string DebugMessage() const override

@@ -92,5 +92,8 @@
     <ClInclude Include="MsgDispatcher.h">
       <Filter>dispatch</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerInitMessage.h">
+      <Filter>message</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

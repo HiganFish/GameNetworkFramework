@@ -25,12 +25,9 @@ struct ControlMessage : public BaseMessage
 		return iter == enumMap.end() ? "UNKNOWN" : iter->second;
 	}
 
-
-	ControlMessage(BaseMessage&& base_message):
-		BaseMessage(std::move(base_message))
-	{
-		DecodeBody();
-	}
+	uint32_t player_id;
+	uint32_t tick;
+	ControlType control_type;
 
 	ControlMessage():
 		player_id(0x12345678),
@@ -41,11 +38,9 @@ struct ControlMessage : public BaseMessage
 		message_type = MessageType::CONTROL;
 	}
 
-	uint32_t player_id;
-	uint32_t tick;
-	ControlType control_type;
+	DECODE_CONSTRUCTOR(ControlMessage)
 
-	std::string DebugMessage() const override
+	DEBUG_MSG_FUNC
 	{
 		return std::format("{} - player_id: {}, tick: {}, control_type: {}",
 			BaseMessage::DebugMessage(), 
@@ -56,14 +51,14 @@ struct ControlMessage : public BaseMessage
 
 private:
 
-	virtual void EncodeData(Buffer& buffer) override
+	ENCODE_DATA_FUNC
 	{
 		APPEND_NUMBER(buffer, player_id);
 		APPEND_NUMBER(buffer, tick);
 		APPEND_ENUM(buffer, control_type);
 	}
 
-	virtual void DecodeBody() override
+	DECODE_DATA_FUNC
 	{
 		READ_NUMBER(body_buffer, player_id);
 		READ_NUMBER(body_buffer, tick);
