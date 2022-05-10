@@ -75,16 +75,17 @@ int FooMain(GameServer& game_server, bool& running)
 				{
 					continue;
 				}
-				if (ptr->base_message_ptr->message_type == MessageType::CONTROL)
+
+				auto msg = std::make_shared<BaseMsgWithRoleId>();
+				msg->role_id = ptr->role_id;
+
+				switch (ptr->base_message_ptr->message_type)
 				{
-					auto msg = std::make_shared<BaseMsgWithRoleId>();
-					msg->role_id = ptr->role_id;
+				case MessageType::CONTROL:
+				{
 					msg->base_message_ptr =
 						std::make_shared<ControlMessage>(std::move(*ptr->base_message_ptr));
-					msg->base_message_ptr->DecodeMessageBody(ptr->body_buffer);
-
-					msg_dispatcher_.Push(std::move(msg));
-
+					
 
 					// BaseMessagePtr message_ptr = SpawnNewMessage<ControlMessage>(*ptr->base_message_ptr);
 					// std::cout << std::format("{}{}", message_ptr->DebugMessage(), CRLF);
@@ -100,11 +101,22 @@ int FooMain(GameServer& game_server, bool& running)
 					if (number == PACK_SUM)
 					{
 						end_time = std::chrono::system_clock::now();
-						std::cout << "cost " << 
+						std::cout << "cost " <<
 							std::chrono::duration_cast<std::chrono::milliseconds>(end_time - begin_time).count() <<
 							std::endl;
 					}*/
+					break;
 				}
+
+				case MessageType::PLAYER_INIT:
+				{
+					msg->base_message_ptr =
+						SpawnNewMessage<PlayerInitMessage>(std::move(*ptr->base_message_ptr));
+					break;
+				}
+				}
+				msg->base_message_ptr->DecodeMessageBody(ptr->body_buffer);
+				msg_dispatcher_.Push(std::move(msg));
 			}
 		});
 
@@ -122,6 +134,11 @@ int FooMain(GameServer& game_server, bool& running)
 
 TEST(GameServer, RecvMsg)
 {
+	Buffer init_buffer;
+	PlayerInitMessage init_message;
+	init_message.role_id = 101010;
+	init_message.EncodeMessage(init_buffer);
+
 	Buffer buffer;
 	ControlMessage message;
 	message.player_id = 101010;
@@ -148,6 +165,13 @@ TEST(GameServer, RecvMsg)
 	{
 		socket_vec.emplace_back(context);
 		asio::connect(socket_vec[i], endpoint);
+		asio::async_write(socket_vec[i], asio::buffer(init_buffer.ReadBegin(), init_buffer.ReadableSize()),
+			[](const asio::error_code& ec, size_t length) {
+				if (ec)
+				{
+					std::cout << ec.message() << std::endl;
+				}
+			});
 	}
 	std::cout << "begin send " << std::endl;
 

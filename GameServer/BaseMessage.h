@@ -50,7 +50,7 @@ public:
 		uint32_t* body_size = nullptr);
 	virtual void DecodeMessageBody(Buffer& buffer) { }
 
-	virtual std::string DebugMessage() const;
+	virtual std::string DebugMessage(const std::string& body = "") const;
 
 private:
 
@@ -97,4 +97,4 @@ struct BaseMsgWithBufferAndId
 
 #define ENCODE_DATA_FUNC virtual void EncodeData(Buffer& buffer) override
 #define DECODE_BODY_FUNC virtual void DecodeMessageBody(Buffer& buffer) override
-#define DEBUG_MSG_FUNC std::string DebugMessage() const override
+#define DEBUG_MSG_FUNC std::string DebugMessage(const std::string& body = "") const override

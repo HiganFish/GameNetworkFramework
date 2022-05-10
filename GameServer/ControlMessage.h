@@ -42,11 +42,11 @@ struct ControlMessage : public BaseMessage
 
 	DEBUG_MSG_FUNC
 	{
-		return std::format("{} - player_id: {}, tick: {}, control_type: {}",
-			BaseMessage::DebugMessage(), 
-			player_id,
-			tick,
-			ControlTypeToString(control_type));
+		return BaseMessage::DebugMessage(
+			std::format("player_id: {}, tick : {}, control_type : {}",
+				player_id,
+				tick,
+				ControlTypeToString(control_type)));
 	}
 
 	DECODE_BODY_FUNC

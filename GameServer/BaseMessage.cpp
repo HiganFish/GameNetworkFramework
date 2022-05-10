@@ -79,8 +79,8 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessageHeader(Buffer& buffer, uint3
 		old_size - buffer.ReadableSize()) };
 }
 
-std::string BaseMessage::DebugMessage() const
+std::string BaseMessage::DebugMessage(const std::string& body) const
 {
-	return std::format("[ magic: {}, version: {}, message_type: {} ]",
-			magic, version, MessageTypeToString(message_type));
+	return std::format("[ magic: {}, version: {}, message_type: {} ] - {}",
+			magic, version, MessageTypeToString(message_type), body);
 }

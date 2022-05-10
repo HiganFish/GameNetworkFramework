@@ -1,4 +1,5 @@
 #include "GameConnection.h"
+#include "PlayerInitMessage.h"
 
 GameConnection::GameConnection(const TcpConnectionPtr& connection):
 	tcp_connection_(connection),
@@ -58,10 +59,18 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 		}
 		else
 		{
+			if (base_message_ptr->message_type == MessageType::PLAYER_INIT)
+			{
+				PlayerInitMessage msg;
+				msg.DecodeMsgBody(buffer.ReadBegin(), body_size);
+				role_id_ = msg.role_id;
+			}
+
 			message_ptr->role_id = role_id_;
 			assert(buffer.ReadableSize() >= body_size);
 			message_ptr->body_buffer.AppendData(buffer.ReadBegin(), body_size);
 			buffer.AddReadIndex(body_size);
+			
 
 			// std::cout << std::format("{} - a new message, {}{}", connection_name_,
 				// message_ptr->DebugMessage(), CRLF);
