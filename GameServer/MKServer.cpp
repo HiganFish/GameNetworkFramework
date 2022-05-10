@@ -1,3 +1,4 @@
+#include <memory>
 #include "MKServer.h"
 
 MKServer::MKServer(const std::string& name, short port,
@@ -7,16 +8,6 @@ MKServer::MKServer(const std::string& name, short port,
 	send_msg_dispatcher_(send_thread_num),
 	started_(false)
 {
-	recv_msg_dispatcher_.SetMsgCallback(MessageType::PLAYER_INIT,
-		[this](ROLE_ID role_id, const BaseMessagePtr& ptr)
-		{
-			PlayerInitMessagePtr message = std::make_shared<PlayerInitMessage>();
-			message->role_id = role_id / 10;
-			auto msg = std::make_shared<BaseMsgWithRoleId>();
-			msg->role_id = role_id;
-			msg->base_message_ptr = message;
-			send_msg_dispatcher_.Push(std::move(msg));
-		});
 	send_msg_dispatcher_.SetDefaultMsgCallback(
 		[this](ROLE_ID role_id, const BaseMessagePtr& ptr)
 		{
@@ -71,4 +62,16 @@ void MKServer::Stop()
 		decode_thread_.join();
 		game_server_.Stop();
 	}
+}
+
+void MKServer::SetMsgCallback(MessageType type, 
+	const MsgDispatcher::MsgCallback& callback)
+{
+	recv_msg_dispatcher_.SetMsgCallback(type, callback);
+}
+
+void MKServer::SendMessageByRoleId(ROLE_ID role_id, const BaseMessagePtr& msg_ptr)
+{
+	send_msg_dispatcher_.Push(
+		std::make_shared<BaseMsgWithRoleId>(role_id, msg_ptr));
 }

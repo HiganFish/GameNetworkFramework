@@ -151,13 +151,13 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="GameConnection.cpp" />
     <ClCompile Include="GameServer.cpp" />
+    <ClCompile Include="GameServerExample.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Message.cpp" />
     <ClCompile Include="MKServer.cpp" />
     <ClCompile Include="MsgDispatcher.cpp" />
     <ClCompile Include="MsgThread.cpp" />
     <ClCompile Include="TcpConnection.cpp" />
-    <ClCompile Include="TempGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AsioServer.h" />
@@ -169,6 +169,7 @@
     <ClInclude Include="EnterRoomMessage.h" />
     <ClInclude Include="GameConnection.h" />
     <ClInclude Include="GameServer.h" />
+    <ClInclude Include="GameServerExample.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="MessageUtils.h" />
     <ClInclude Include="MKServer.h" />

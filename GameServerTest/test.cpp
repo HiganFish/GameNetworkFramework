@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "MKServer.h"
+#include "GameServerExample.h"
 
 TEST(Message, MessageCodec)
 {
@@ -100,7 +100,7 @@ TEST(GameServer, RecvMsg)
 	std::thread t1(
 		[&mkserver]()
 		{ 
-			MKServer server("TestServer", 40000, 1, 1);
+			GameServerExample server("TestServer", 40000);
 			mkserver = &server;
 			server.Start();
 		});

@@ -1,5 +1,5 @@
 #include "GameConnection.h"
-#include "PlayerInitMessage.h"
+#include "Messages.h"
 
 GameConnection::GameConnection(const TcpConnectionPtr& connection):
 	tcp_connection_(connection),
@@ -76,6 +76,8 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 					register_func_(role_id_, shared_from_this());
 				}
 			}
+			// TODO 关闭连接
+			assert(role_id_ != 0);
 
 			message_ptr->role_id = role_id_;
 			assert(buffer.ReadableSize() >= body_size);

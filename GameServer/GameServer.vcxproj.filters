@@ -51,9 +51,6 @@
     <ClCompile Include="MsgDispatcher.cpp">
       <Filter>dispatch</Filter>
     </ClCompile>
-    <ClCompile Include="TempGame.cpp">
-      <Filter>game</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -62,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="Message.cpp">
       <Filter>message</Filter>
+    </ClCompile>
+    <ClCompile Include="GameServerExample.cpp">
+      <Filter>game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServerExample.h">
+      <Filter>game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

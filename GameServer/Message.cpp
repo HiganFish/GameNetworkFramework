@@ -8,7 +8,6 @@
 	break;	\
 }
 
-
 BaseMsgWithRoleIdPtr TransmitMessage(BaseMsgWithBufferAndIdPtr msg_ptr)
 {
 	auto msg = std::make_shared<BaseMsgWithRoleId>();
@@ -17,8 +16,8 @@ BaseMsgWithRoleIdPtr TransmitMessage(BaseMsgWithBufferAndIdPtr msg_ptr)
 	switch (msg_ptr->base_message_ptr->message_type)
 	{
 		REGIST_MSG(MessageType::CONTROL, ControlMessage)
-			REGIST_MSG(MessageType::PLAYER_INIT, PlayerInitMessage)
-			REGIST_MSG(MessageType::ENTER_ROOM, PlayerInitMessage)
+		REGIST_MSG(MessageType::PLAYER_INIT, PlayerInitMessage)
+		REGIST_MSG(MessageType::ENTER_ROOM, PlayerInitMessage)
 	}
 	return msg;
 }

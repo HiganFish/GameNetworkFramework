@@ -16,6 +16,7 @@ enum class MessageType : uint8_t
 	ENTER_ROOM,
 	TYPE_MAX
 };
+
 static std::string MessageTypeToString(MessageType type)
 {
 	static std::unordered_map<MessageType, std::string> enumMap
@@ -70,11 +71,6 @@ private:
 };
 using BaseMessagePtr = std::shared_ptr<BaseMessage>;
 
-template <typename T, typename...Args>
-BaseMessagePtr SpawnNewMessage(Args&&...args)
-{
-	return std::make_shared<T>(std::forward<Args>(args)...);
-}
 
 struct BaseMsgWithRoleId
 {
