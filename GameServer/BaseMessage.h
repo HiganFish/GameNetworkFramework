@@ -46,12 +46,11 @@ public:
 	true 0 数据不足
 	true n 解析成功 消耗n字节数据
 	*/
-	std::pair<bool, uint32_t> DecodeMessage(Buffer& buffer);
+	std::pair<bool, uint32_t> DecodeMessageHeader(Buffer& buffer,
+		uint32_t* body_size = nullptr);
+	virtual void DecodeMessageBody(Buffer& buffer) { }
 
 	virtual std::string DebugMessage() const;
-
-protected:
-	TinyBuffer body_buffer;
 
 private:
 
@@ -66,7 +65,6 @@ private:
 	// 位于序列化后数据的起始位置
 	// uint32_t pack_size;
 	virtual void EncodeData(Buffer& buffer) {}
-	virtual void DecodeBody() { }
 };
 
 template <typename T, typename...Args>
@@ -81,9 +79,22 @@ struct BaseMsgWithRoleId
 	BaseMessagePtr base_message_ptr;
 };
 
+struct BaseMsgWithBuffer
+{
+	TinyBuffer body_buffer;
+	BaseMessagePtr base_message_ptr;
+};
+
+struct BaseMsgWithBufferAndId
+{
+	ROLE_ID role_id;
+	TinyBuffer body_buffer;
+	BaseMessagePtr base_message_ptr;
+};
+
 #define DECODE_CONSTRUCTOR(class_name) class_name \
-(BaseMessage&& base_message): BaseMessage(std::move(base_message)) {DecodeBody();}
+(BaseMessage&& base_message): BaseMessage(std::move(base_message)) {}
 
 #define ENCODE_DATA_FUNC virtual void EncodeData(Buffer& buffer) override
-#define DECODE_DATA_FUNC virtual void DecodeBody() override
+#define DECODE_BODY_FUNC virtual void DecodeMessageBody(Buffer& buffer) override
 #define DEBUG_MSG_FUNC std::string DebugMessage() const override

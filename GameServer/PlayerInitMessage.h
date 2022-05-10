@@ -20,15 +20,14 @@ public:
 	{
 	}
 
+	DECODE_BODY_FUNC
+	{
+		READ_NUMBER(buffer, player_id);
+	}
 private:
 
 	ENCODE_DATA_FUNC
 	{
 		APPEND_NUMBER(buffer, player_id);
-	}
-
-	DECODE_DATA_FUNC
-	{
-		READ_NUMBER(body_buffer, player_id);
 	}
 };

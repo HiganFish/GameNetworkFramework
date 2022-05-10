@@ -20,12 +20,13 @@ TEST(Message, MessageCodec)
 	message.EncodeMessage(buffer);
 
 	BaseMessagePtr ptr = SpawnNewMessage<BaseMessage>();
-	ptr->DecodeMessage(buffer);
-	assert(buffer.ReadableSize() == 0);
+	ptr->DecodeMessageHeader(buffer);
 
 	if (ptr->message_type == MessageType::CONTROL)
 	{
 		ControlMessage new_message(std::move(*ptr));
+		new_message.DecodeMessageBody(buffer);
+		assert(buffer.ReadableSize() == 0);
 		std::cout << new_message.DebugMessage() << std::endl;
 	}
 }
@@ -38,13 +39,13 @@ int FooMain(GameServer& game_server, bool& running)
 	// bool running = true;
 	// GameServer game_server("TestServer", 40000);
 
-	ThreadSafeQueue<BaseMsgWithRoleIdPtr> new_pack_queue;
+	ThreadSafeQueue<BaseMsgWithBufferAndIdPtr> new_pack_queue;
 	ThreadSafeQueue<BaseMsgWithRoleIdPtr> wait_for_send_queue;
 	MsgDispatcher msg_dispatcher_(1);
 	msg_dispatcher_.Start();
 
-	game_server.SetOnNewMsgWithIdFunc(
-		[&new_pack_queue](BaseMsgWithRoleIdPtr&& ptr)
+	game_server.SetOnNewMsgWithBufferAndIdFunc(
+		[&new_pack_queue](BaseMsgWithBufferAndIdPtr&& ptr)
 		{
 			new_pack_queue.Push(std::move(ptr));
 		});
@@ -68,7 +69,7 @@ int FooMain(GameServer& game_server, bool& running)
 		{
 			while (running)
 			{
-				BaseMsgWithRoleIdPtr ptr;
+				BaseMsgWithBufferAndIdPtr ptr;
 				bool has = new_pack_queue.TryPop(ptr);
 				if (!has)
 				{
@@ -76,9 +77,13 @@ int FooMain(GameServer& game_server, bool& running)
 				}
 				if (ptr->base_message_ptr->message_type == MessageType::CONTROL)
 				{
-					ptr->base_message_ptr =
+					auto msg = std::make_shared<BaseMsgWithRoleId>();
+					msg->role_id = ptr->role_id;
+					msg->base_message_ptr =
 						std::make_shared<ControlMessage>(std::move(*ptr->base_message_ptr));
-					msg_dispatcher_.Push(std::move(ptr));
+					msg->base_message_ptr->DecodeMessageBody(ptr->body_buffer);
+
+					msg_dispatcher_.Push(std::move(msg));
 
 
 					// BaseMessagePtr message_ptr = SpawnNewMessage<ControlMessage>(*ptr->base_message_ptr);

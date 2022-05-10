@@ -12,8 +12,7 @@ BaseMessage::BaseMessage() :
 BaseMessage::BaseMessage(BaseMessage&& old_message) noexcept :
 	magic(old_message.magic),
 	version(old_message.version),
-	message_type(old_message.message_type),
-	body_buffer(std::move(old_message.body_buffer))
+	message_type(old_message.message_type)
 {
 }
 
@@ -31,7 +30,7 @@ void BaseMessage::EncodeMessage(Buffer& buffer)
 		static_cast<uint32_t>(buffer.ReadableSize() - old_size));
 }
 
-std::pair<bool, uint32_t> BaseMessage::DecodeMessage(Buffer& buffer)
+std::pair<bool, uint32_t> BaseMessage::DecodeMessageHeader(Buffer& buffer, uint32_t* body_size)
 {
 	uint32_t old_size = buffer.ReadableSize();
 	uint32_t pack_size = 0;
@@ -71,11 +70,10 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessage(Buffer& buffer)
 	{
 		return { false, 0 };
 	}
-
-	uint32_t body_size = pack_size - HEADER_SIZE_NO_LENGTH;
-	body_buffer.AppendData(buffer.ReadBegin(), body_size);
-	buffer.AddReadIndex(body_size);
-	DecodeBody();
+	if (body_size)
+	{
+		*body_size = pack_size - HEADER_SIZE_NO_LENGTH;
+	}
 
 	return { true, static_cast<uint32_t>(
 		old_size - buffer.ReadableSize()) };

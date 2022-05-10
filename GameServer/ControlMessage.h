@@ -49,6 +49,12 @@ struct ControlMessage : public BaseMessage
 			ControlTypeToString(control_type));
 	}
 
+	DECODE_BODY_FUNC
+	{
+		READ_NUMBER(buffer, player_id);
+		READ_NUMBER(buffer, tick);
+		READ_ENUM(buffer, control_type);
+	}
 private:
 
 	ENCODE_DATA_FUNC
@@ -56,13 +62,6 @@ private:
 		APPEND_NUMBER(buffer, player_id);
 		APPEND_NUMBER(buffer, tick);
 		APPEND_ENUM(buffer, control_type);
-	}
-
-	DECODE_DATA_FUNC
-	{
-		READ_NUMBER(body_buffer, player_id);
-		READ_NUMBER(body_buffer, tick);
-		READ_ENUM(body_buffer, control_type);
 	}
 };
 

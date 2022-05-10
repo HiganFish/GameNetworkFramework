@@ -8,7 +8,7 @@ GameServer::GameServer(const std::string& server_name, short port):
 void GameServer::OnNewTcpConnection(const TcpConnectionPtr& connection)
 {
 	auto game_connection_ptr = std::make_shared<GameConnection>(connection);
-	game_connection_ptr->SetOnNewMsgWithIdFunc(on_new_msg_with_id_func_);
+	game_connection_ptr->SetOnNewMsgWithBufferAndIdFunc(on_new_msg_with_id_func_);
 	game_connection_map_.insert({ game_connection_ptr->GetConnectionName(), game_connection_ptr });
 
 	game_connection_ptr->StartRecvData();
@@ -23,7 +23,7 @@ void GameServer::SetTryGetMessageFunc(const TryGetMessageFunc& func)
 	try_get_message_func_ = func;
 }
 
-void GameServer::SetOnNewMsgWithIdFunc(const OnNewMsgWithIdFunc& func)
+void GameServer::SetOnNewMsgWithBufferAndIdFunc(const OnNewMsgWithBufferAndIdFunc& func)
 {
 	on_new_msg_with_id_func_ = func;
 }

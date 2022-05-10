@@ -16,9 +16,9 @@ const std::string& GameConnection::GetConnectionName()
 	return connection_name_;
 }
 
-void GameConnection::SetOnNewMsgWithIdFunc(const OnNewMsgWithIdFunc& func)
+void GameConnection::SetOnNewMsgWithBufferAndIdFunc(const OnNewMsgWithBufferAndIdFunc& func)
 {
-	on_new_msg_with_id_func_ = func;
+	on_new_msg_with_buf_and_id_func_ = func;
 }
 
 void GameConnection::AsyncSendData(const char* data, size_t length)
@@ -41,8 +41,11 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 	bool error = false;
 	while (data_enought && !error)
 	{
-		auto message_ptr = SpawnNewMessage<BaseMessage>();
-		auto [ok, length] = message_ptr->DecodeMessage(buffer);
+		auto message_ptr = std::make_shared<BaseMsgWithBufferAndId>();
+		auto base_message_ptr = SpawnNewMessage<BaseMessage>();
+		message_ptr->base_message_ptr = base_message_ptr;
+		uint32_t body_size;
+		auto [ok, length] = base_message_ptr->DecodeMessageHeader(buffer, &body_size);
 		if (!ok)
 		{
 			error = true;
@@ -55,13 +58,17 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 		}
 		else
 		{
+			message_ptr->role_id = role_id_;
+			assert(buffer.ReadableSize() >= body_size);
+			message_ptr->body_buffer.AppendData(buffer.ReadBegin(), body_size);
+			buffer.AddReadIndex(body_size);
+
 			// std::cout << std::format("{} - a new message, {}{}", connection_name_,
 				// message_ptr->DebugMessage(), CRLF);
 
-			if (on_new_msg_with_id_func_)
+			if (on_new_msg_with_buf_and_id_func_)
 			{
-				on_new_msg_with_id_func_(
-					std::make_shared<BaseMsgWithRoleId>(role_id_, std::move(message_ptr)));
+				on_new_msg_with_buf_and_id_func_(std::move(message_ptr));
 			}
 		}
 	}

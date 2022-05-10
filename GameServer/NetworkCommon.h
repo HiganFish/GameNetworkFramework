@@ -15,6 +15,12 @@ using BaseMessagePtr = std::shared_ptr<BaseMessage>;
 struct BaseMsgWithRoleId;
 using BaseMsgWithRoleIdPtr = std::shared_ptr<BaseMsgWithRoleId>;
 
+struct BaseMsgWithBuffer;
+using BaseMsgWithBufferPtr = std::shared_ptr<BaseMsgWithBuffer>;
+
+struct BaseMsgWithBufferAndId;
+using BaseMsgWithBufferAndIdPtr = std::shared_ptr<BaseMsgWithBufferAndId>;
+
 struct ControlMessage;
 using ControlMessagePtr = std::shared_ptr<ControlMessage>;
 
@@ -23,7 +29,7 @@ class GameConnection;
 using GameConnectionPtr = std::shared_ptr<GameConnection>;
 
 
-using OnNewMsgWithIdFunc = std::function<void(BaseMsgWithRoleIdPtr&&)>;
+using OnNewMsgWithBufferAndIdFunc = std::function<void(BaseMsgWithBufferAndIdPtr&&)>;
 using TryGetMessageFunc = std::function<bool(BaseMessagePtr&)>;
 
 
