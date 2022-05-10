@@ -31,6 +31,11 @@ public:
 
 	const std::string& GetConnectionName() const;
 
+	asio::ip::tcp::socket& GetSocket()
+	{
+		return socket_;
+	}
+
 private:
 	Buffer buffer_;
 	asio::ip::tcp::socket socket_;

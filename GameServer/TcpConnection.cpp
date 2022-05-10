@@ -37,7 +37,10 @@ void TcpConnection::AsyncSendData(const char* data, size_t length)
     asio::async_write(socket_, asio::buffer(data, length), 
         [length](const asio::error_code& ec, size_t write_length)
         {
-            assert(length == write_length);
+            if (length != write_length)
+            {
+                std::cout << ec.message() << std::endl;
+            }
         });
 }
 

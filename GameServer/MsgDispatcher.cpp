@@ -11,9 +11,10 @@ void DefaultMsgCallback(ROLE_ID role_id, BaseMessagePtr msg_ptr)
 MsgDispatcher::MsgDispatcher(uint32_t thread_num) :
 	started_(false),
 	thread_num_(thread_num),
+	default_message_callback_(DefaultMsgCallback),
 	msg_threads_(),
 	msg_callbacks_(
-		std::to_underlying(MessageType::TYPE_MAX), DefaultMsgCallback)
+		std::to_underlying(MessageType::TYPE_MAX), default_message_callback_)
 {
 }
 
@@ -66,4 +67,8 @@ void MsgDispatcher::SetMsgCallback(MessageType msg_type, const MsgCallback& call
 	assert(msg_type > MessageType::TYTE_MIN && 
 					msg_type < MessageType::TYPE_MAX);
 	msg_callbacks_[std::to_underlying(msg_type)] = callback;
+}
+void MsgDispatcher::SetDefaultMsgCallback(const MsgCallback& callback)
+{
+	default_message_callback_ = callback;
 }

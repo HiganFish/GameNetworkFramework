@@ -21,9 +21,12 @@ public:
 
 	void SetMsgCallback(MessageType msg_type, const MsgCallback& callback);
 
+	void SetDefaultMsgCallback(const MsgCallback& callback);
+
 private:
 	bool started_;
 	uint32_t thread_num_;
+	MsgCallback default_message_callback_;
 	std::vector<std::shared_ptr<MsgThread>> msg_threads_;
 
 	std::vector<MsgCallback> msg_callbacks_;

@@ -3,6 +3,8 @@
 
 GameConnection::GameConnection(const TcpConnectionPtr& connection):
 	tcp_connection_(connection),
+	register_func_(nullptr),
+	role_id_(0),
 	connection_name_(tcp_connection_->GetConnectionName()),
 	recving_data_(false)
 {
@@ -36,6 +38,11 @@ void GameConnection::StartRecvData()
 	}
 }
 
+void GameConnection::SetRegisterFunc(const RegisterRoleIdConnFunc& func)
+{
+	register_func_ = func;
+}
+
 void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffer)
 {
 	bool data_enought = true;
@@ -64,6 +71,10 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 				PlayerInitMessage msg;
 				msg.DecodeMsgBody(buffer.ReadBegin(), body_size);
 				role_id_ = msg.role_id;
+				if (register_func_)
+				{
+					register_func_(role_id_, shared_from_this());
+				}
 			}
 
 			message_ptr->role_id = role_id_;

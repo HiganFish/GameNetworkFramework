@@ -1,5 +1,6 @@
 #pragma once
 
+#include <shared_mutex>
 #include "AsioServer.h"
 #include "GameConnection.h"
 
@@ -19,8 +20,11 @@ public:
 
     void SendMessageById(ROLE_ID role_id, const char* data, size_t length);
 
-private:
+    void AddConnToRoleMap(ROLE_ID role_id, const GameConnectionPtr& conn);
 
+private:
+    mutable std::shared_mutex conn_map_mutex_;
+    mutable std::shared_mutex role_id_map_mutex_;
     std::unordered_map<std::string, GameConnectionPtr> game_connection_map_;
     std::unordered_map<ROLE_ID, GameConnectionPtr> role_id_conn_map_;
 

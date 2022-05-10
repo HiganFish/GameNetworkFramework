@@ -9,7 +9,11 @@ void GameServer::OnNewTcpConnection(const TcpConnectionPtr& connection)
 {
 	auto game_connection_ptr = std::make_shared<GameConnection>(connection);
 	game_connection_ptr->SetOnNewMsgWithBufferAndIdFunc(on_new_msg_with_id_func_);
-	game_connection_map_.insert({ game_connection_ptr->GetConnectionName(), game_connection_ptr });
+	game_connection_ptr->SetRegisterFunc([this](auto&& PH1, auto&& PH2) {AddConnToRoleMap(PH1, PH2); });
+	{
+		std::unique_lock guard(conn_map_mutex_);
+		game_connection_map_.insert({ game_connection_ptr->GetConnectionName(), game_connection_ptr });
+	}
 
 	game_connection_ptr->StartRecvData();
 }
@@ -30,10 +34,20 @@ void GameServer::SetOnNewMsgWithBufferAndIdFunc(const OnNewMsgWithBufferAndIdFun
 
 void GameServer::SendMessageById(ROLE_ID role_id, const char* data, size_t length)
 {
-	// TODO temp code
-
-	for (auto [connection_name, connection_ptr] : game_connection_map_)
+	std::shared_lock guard(role_id_map_mutex_);
+	auto iter = role_id_conn_map_.find(role_id);
+	if (iter != role_id_conn_map_.end())
 	{
-		connection_ptr->AsyncSendData(data, length);
+		iter->second->AsyncSendData(data, length);
 	}
+	else
+	{
+		std::cout << std::format("unknown role_id: {}{}", role_id, CRLF);
+	}
+}
+
+void GameServer::AddConnToRoleMap(ROLE_ID role_id, const GameConnectionPtr& conn)
+{
+	std::unique_lock guard(role_id_map_mutex_);
+	role_id_conn_map_[role_id] = conn;
 }
