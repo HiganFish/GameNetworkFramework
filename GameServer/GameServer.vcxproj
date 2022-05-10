@@ -151,20 +151,27 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="GameConnection.cpp" />
     <ClCompile Include="GameServer.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Message.cpp" />
+    <ClCompile Include="MKServer.cpp" />
     <ClCompile Include="MsgDispatcher.cpp" />
     <ClCompile Include="MsgThread.cpp" />
     <ClCompile Include="TcpConnection.cpp" />
+    <ClCompile Include="TempGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AsioServer.h" />
     <ClInclude Include="BaseMessage.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="ByteOrder.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="ControlMessage.h" />
+    <ClInclude Include="EnterRoomMessage.h" />
     <ClInclude Include="GameConnection.h" />
     <ClInclude Include="GameServer.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="MessageUtils.h" />
+    <ClInclude Include="MKServer.h" />
     <ClInclude Include="MsgDispatcher.h" />
     <ClInclude Include="MsgThread.h" />
     <ClInclude Include="NetworkCommon.h" />

@@ -64,4 +64,4 @@ private:
 		APPEND_ENUM(buffer, control_type);
 	}
 };
-
+using ControlMessagePtr = std::shared_ptr<ControlMessage>;

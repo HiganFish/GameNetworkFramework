@@ -41,3 +41,4 @@ private:
 		APPEND_NUMBER(buffer, role_id);
 	}
 };
+using PlayerInitMessagePtr = std::shared_ptr<PlayerInitMessage>;

@@ -5,7 +5,7 @@
 #include <format>
 #include <unordered_map>
 #include "MessageUtils.h"
-#include "NetworkCommon.h"
+#include "Common.h"
 
 enum class MessageType : uint8_t
 {
@@ -13,6 +13,7 @@ enum class MessageType : uint8_t
 	DEFAULT,
 	CONTROL,
 	PLAYER_INIT,
+	ENTER_ROOM,
 	TYPE_MAX
 };
 static std::string MessageTypeToString(MessageType type)
@@ -20,6 +21,7 @@ static std::string MessageTypeToString(MessageType type)
 	static std::unordered_map<MessageType, std::string> enumMap
 	{ {MessageType::DEFAULT, "DEFAULT"},
 	{MessageType::PLAYER_INIT, "PLAYER_INIT"},
+	{MessageType::ENTER_ROOM, "ENTER_ROOM"},
 	{MessageType::CONTROL, "CONTROL"}};
 
 	auto iter = enumMap.find(type);
@@ -66,6 +68,7 @@ private:
 	// uint32_t pack_size;
 	virtual void EncodeData(Buffer& buffer) {}
 };
+using BaseMessagePtr = std::shared_ptr<BaseMessage>;
 
 template <typename T, typename...Args>
 BaseMessagePtr SpawnNewMessage(Args&&...args)
@@ -78,12 +81,14 @@ struct BaseMsgWithRoleId
 	ROLE_ID role_id;
 	BaseMessagePtr base_message_ptr;
 };
+using BaseMsgWithRoleIdPtr = std::shared_ptr<BaseMsgWithRoleId>;
 
 struct BaseMsgWithBuffer
 {
 	TinyBuffer body_buffer;
 	BaseMessagePtr base_message_ptr;
 };
+using BaseMsgWithBufferPtr = std::shared_ptr<BaseMsgWithBuffer>;
 
 struct BaseMsgWithBufferAndId
 {
@@ -91,6 +96,8 @@ struct BaseMsgWithBufferAndId
 	TinyBuffer body_buffer;
 	BaseMessagePtr base_message_ptr;
 };
+using BaseMsgWithBufferAndIdPtr = std::shared_ptr<BaseMsgWithBufferAndId>;
+
 
 #define DECODE_CONSTRUCTOR(class_name) class_name \
 (BaseMessage&& base_message): BaseMessage(std::move(base_message)) {}

@@ -25,6 +25,9 @@
     <Filter Include="dispatch">
       <UniqueIdentifier>{09bc84ac-ec42-4f29-a0ae-e168189a994d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{4a950cfd-7c5b-4dba-96a9-7f88f090a822}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseMessage.cpp">
@@ -47,6 +50,18 @@
     </ClCompile>
     <ClCompile Include="MsgDispatcher.cpp">
       <Filter>dispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="TempGame.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MKServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Message.cpp">
+      <Filter>message</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +109,15 @@
     </ClInclude>
     <ClInclude Include="PlayerInitMessage.h">
       <Filter>message</Filter>
+    </ClInclude>
+    <ClInclude Include="EnterRoomMessage.h">
+      <Filter>message</Filter>
+    </ClInclude>
+    <ClInclude Include="MKServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

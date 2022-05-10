@@ -1,5 +1,7 @@
 #pragma once
 #include <array>
+#include <functional>
+
 #include "MsgThread.h"
 
 class MsgDispatcher

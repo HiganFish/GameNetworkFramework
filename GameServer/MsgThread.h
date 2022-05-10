@@ -1,9 +1,9 @@
 #pragma once
 
 #include <thread>
-
+#include <functional>
 #include "ThreadSafeQueue.h"
-#include "BaseMessage.h"
+#include "Messages.h"
 
 class MsgThread
 {
