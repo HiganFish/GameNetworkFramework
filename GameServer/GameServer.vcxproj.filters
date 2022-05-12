@@ -54,14 +54,14 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MKServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Message.cpp">
       <Filter>message</Filter>
     </ClCompile>
     <ClCompile Include="GameServerExample.cpp">
       <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="MKServer.cpp">
+      <Filter>network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,14 +113,14 @@
     <ClInclude Include="EnterRoomMessage.h">
       <Filter>message</Filter>
     </ClInclude>
-    <ClInclude Include="MKServer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameServerExample.h">
       <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="MKServer.h">
+      <Filter>network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

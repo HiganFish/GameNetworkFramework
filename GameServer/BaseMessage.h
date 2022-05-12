@@ -38,6 +38,7 @@ public:
 	MessageType message_type;
 
 	BaseMessage();
+	virtual ~BaseMessage() = default;
 
 	BaseMessage(BaseMessage&& old_message) noexcept;
 

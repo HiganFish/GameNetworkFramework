@@ -15,7 +15,8 @@ public:
         port_(port)
     {
     }
-
+    virtual ~AsioServer()
+    {}
     void Start()
     {
         try
