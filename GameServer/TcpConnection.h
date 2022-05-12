@@ -4,7 +4,6 @@
 #include <memory>
 #include <iostream>
 #include <functional>
-#include <asio.hpp>
 
 #include "Buffer.h"
 #include "BaseMessage.h"

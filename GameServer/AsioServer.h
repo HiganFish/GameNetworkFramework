@@ -1,23 +1,9 @@
 #pragma once
 
-#define _WIN32_WINNT 0x0601
-
-#include <asio.hpp>
 #include <cstdio>
 
+#include "NetworkCommon.h"
 #include "TcpConnection.h"
-
-using asio::ip::tcp;
-using asio::awaitable;
-using asio::co_spawn;
-using asio::detached;
-using asio::use_awaitable;
-namespace this_coro = asio::this_coro;
-
-#if defined(ASIO_ENABLE_HANDLER_TRACKING)
-# define use_awaitable \
-  asio::use_awaitable_t(__FILE__, __LINE__, __PRETTY_FUNCTION__)
-#endif
 
 class AsioServer
 {

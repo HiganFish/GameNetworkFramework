@@ -106,6 +106,7 @@ TEST(GameServer, RecvMsg)
 		});
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
+
 	asio::io_context client_io;
 	asio::executor_work_guard<asio::io_context::executor_type> client_guard{
 		asio::make_work_guard(client_io) };
