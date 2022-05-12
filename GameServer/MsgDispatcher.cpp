@@ -3,8 +3,8 @@
 
 void DefaultMsgCallback(ROLE_ID role_id, BaseMessagePtr msg_ptr)
 {
-	std::cout << std::format("default msg callback {}-{}{}",
-		role_id, msg_ptr->DebugMessage(), CRLF);
+	std::cout << std::format("default msg callback {}-{}\r\n",
+		role_id, msg_ptr->DebugMessage());
 }
 
 

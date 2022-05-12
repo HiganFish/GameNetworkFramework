@@ -17,7 +17,6 @@ namespace this_coro = asio::this_coro;
 #include <memory>
 #include <functional>
 #include "BaseMessage.h"
-#include "Common.h"
 
 
 class GameConnection;

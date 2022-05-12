@@ -5,7 +5,6 @@
 #include <format>
 #include <unordered_map>
 #include "MessageUtils.h"
-#include "Common.h"
 
 enum class MessageType : uint8_t
 {

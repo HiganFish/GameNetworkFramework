@@ -16,9 +16,6 @@
     <Filter Include="utils">
       <UniqueIdentifier>{998e3a95-eabd-4952-a05a-fc1b539dd815}</UniqueIdentifier>
     </Filter>
-    <Filter Include="message">
-      <UniqueIdentifier>{b24e03c5-a6e5-411d-ad6e-636251e4e74e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="network">
       <UniqueIdentifier>{1af8dd01-9a55-4da4-a65d-a0c7d99242df}</UniqueIdentifier>
     </Filter>
@@ -30,12 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseMessage.cpp">
-      <Filter>message</Filter>
-    </ClCompile>
-    <ClCompile Include="Buffer.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
     <ClCompile Include="GameConnection.cpp">
       <Filter>network</Filter>
     </ClCompile>
@@ -54,9 +45,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Message.cpp">
-      <Filter>message</Filter>
-    </ClCompile>
     <ClCompile Include="GameServerExample.cpp">
       <Filter>game</Filter>
     </ClCompile>
@@ -65,21 +53,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MessageUtils.h">
-      <Filter>message</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseMessage.h">
-      <Filter>message</Filter>
-    </ClInclude>
-    <ClInclude Include="ControlMessage.h">
-      <Filter>message</Filter>
-    </ClInclude>
-    <ClInclude Include="Buffer.h">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="ByteOrder.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="AsioServer.h">
       <Filter>network</Filter>
     </ClInclude>
@@ -92,14 +65,8 @@
     <ClInclude Include="TcpConnection.h">
       <Filter>network</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadSafeQueue.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="NetworkCommon.h">
       <Filter>network</Filter>
-    </ClInclude>
-    <ClInclude Include="Messages.h">
-      <Filter>message</Filter>
     </ClInclude>
     <ClInclude Include="MsgThread.h">
       <Filter>dispatch</Filter>
@@ -107,20 +74,14 @@
     <ClInclude Include="MsgDispatcher.h">
       <Filter>dispatch</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerInitMessage.h">
-      <Filter>message</Filter>
-    </ClInclude>
-    <ClInclude Include="EnterRoomMessage.h">
-      <Filter>message</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameServerExample.h">
       <Filter>game</Filter>
     </ClInclude>
     <ClInclude Include="MKServer.h">
       <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadSafeQueue.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

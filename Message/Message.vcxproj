@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{974284d2-03a6-4f1c-88c2-7c0eff2397cf}</ProjectGuid>
-    <RootNamespace>GameServer</RootNamespace>
+    <ProjectGuid>{a6eb21e3-b6c6-465b-abed-1337c07baaef}</ProjectGuid>
+    <RootNamespace>Message</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -78,12 +78,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Data\CPP\asio-1.20.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Data\CPP\GameProject\Message;C:\Data\CPP\GameProject\Buffer;C:\Data\CPP\asio-1.20.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Data\CPP\GameProject\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Data\CPP\GameProject\Buffer;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -119,16 +117,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <PreLinkEvent>
-      <Command>
-      </Command>
-    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -139,8 +132,6 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,38 +139,20 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameConnection.cpp" />
-    <ClCompile Include="GameServer.cpp" />
-    <ClCompile Include="GameServerExample.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MKServer.cpp" />
-    <ClCompile Include="MsgDispatcher.cpp" />
-    <ClCompile Include="MsgThread.cpp" />
-    <ClCompile Include="TcpConnection.cpp" />
+    <ClCompile Include="BaseMessage.cpp" />
+    <ClCompile Include="Messages.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AsioServer.h" />
-    <ClInclude Include="GameConnection.h" />
-    <ClInclude Include="GameServer.h" />
-    <ClInclude Include="GameServerExample.h" />
-    <ClInclude Include="MKServer.h" />
-    <ClInclude Include="MsgDispatcher.h" />
-    <ClInclude Include="MsgThread.h" />
-    <ClInclude Include="NetworkCommon.h" />
-    <ClInclude Include="TcpConnection.h" />
-    <ClInclude Include="ThreadSafeQueue.h" />
+    <ClInclude Include="BaseMessage.h" />
+    <ClInclude Include="ControlMessage.h" />
+    <ClInclude Include="Messages.h" />
+    <ClInclude Include="MessageUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Buffer\Buffer.vcxproj">
       <Project>{d4aa47a3-f175-4fe9-bcb7-9aa9f3bc302c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Message\Message.vcxproj">
-      <Project>{a6eb21e3-b6c6-465b-abed-1337c07baaef}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

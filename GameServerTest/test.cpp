@@ -79,7 +79,7 @@ void FooClient(asio::io_context& context)
 		game_conn_vec[i]->SetOnNewMsgWithBufferAndIdFunc(
 			[](BaseMsgWithBufferAndIdPtr&& ptr)
 			{
-				std::cout << std::format("{}{}", ptr->base_message_ptr->DebugMessage(), CRLF);
+				std::cout << std::format("{}\r\n", ptr->base_message_ptr->DebugMessage());
 			});
 
 		game_conn_vec[i]->AsyncSendData(init_buffer.ReadBegin(), init_buffer.ReadableSize());

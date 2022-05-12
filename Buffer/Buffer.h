@@ -1,5 +1,4 @@
-#ifndef UTILS_BUFFER_H
-#define UTILS_BUFFER_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -106,5 +105,8 @@ private:
 	}
 };
 
-
-#endif // !UTILS_BUFFER_H
+#define APPEND_NUMBER(buffer, number) buffer.AppendNumber<decltype(number)>(number)
+#define APPEND_ENUM(buffer, e) APPEND_NUMBER(buffer, std::to_underlying(e))
+#define READ_NUMBER(buffer, var) var = buffer.ReadNumber<decltype(var)>()
+#define PEEK_NUMBER(buffer, var) var = buffer.PeekNumber<decltype(var)>()
+#define READ_ENUM(buffer, var) var = static_cast<decltype(var)>(buffer.ReadNumber<decltype(std::to_underlying(var))>())

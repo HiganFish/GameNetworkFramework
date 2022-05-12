@@ -6,7 +6,8 @@ GameConnection::GameConnection(const TcpConnectionPtr& connection):
 	register_func_(nullptr),
 	role_id_(0),
 	connection_name_(tcp_connection_->GetConnectionName()),
-	recving_data_(false)
+	recving_data_(false),
+	on_new_msg_with_buf_and_id_func_(nullptr)
 {
 	tcp_connection_->SetOnNewDataFunc(
 		[this](auto&& PH1, auto&& PH2)
@@ -83,10 +84,6 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 			assert(buffer.ReadableSize() >= body_size);
 			message_ptr->body_buffer.AppendData(buffer.ReadBegin(), body_size);
 			buffer.AddReadIndex(body_size);
-			
-
-			// std::cout << std::format("{} - a new message, {}{}", connection_name_,
-				// message_ptr->DebugMessage(), CRLF);
 
 			if (on_new_msg_with_buf_and_id_func_)
 			{

@@ -37,7 +37,7 @@
     <LibraryPath>C:\Data\CPP\GameProject\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Data\CPP\asio-1.20.0\include;C:\Data\CPP\GameProject\GameServer;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Data\CPP\GameProject\Message;C:\Data\CPP\GameProject\Buffer;C:\Data\CPP\asio-1.20.0\include;C:\Data\CPP\GameProject\GameServer;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Data\CPP\GameProject\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemGroup>
@@ -56,8 +56,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Buffer\Buffer.vcxproj">
+      <Project>{d4aa47a3-f175-4fe9-bcb7-9aa9f3bc302c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GameServer\GameServer.vcxproj">
       <Project>{974284d2-03a6-4f1c-88c2-7c0eff2397cf}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Message\Message.vcxproj">
+      <Project>{a6eb21e3-b6c6-465b-abed-1337c07baaef}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemDefinitionGroup />
