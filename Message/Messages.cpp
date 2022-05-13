@@ -17,5 +17,6 @@ BaseMessagePtr TransmitMessage(BaseMsgWithBufferPtr msg_with_buffer)
 		REGIST_MSG(MessageType::PING, PingMessage)
 		REGIST_MSG(MessageType::ENTER_ROOM, EnterRoomMessage)
 	}
+	msg_ptr->DecodeMessageBody(msg_with_buffer->body_buffer);
 	return msg_ptr;
 }

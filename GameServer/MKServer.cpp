@@ -41,7 +41,6 @@ void MKServer::Start()
 						continue;
 					}
 					auto msg = TransmitMessage(ptr);
-					msg->DecodeMessageBody(ptr->body_buffer);
 					recv_msg_dispatcher_.Push(msg->role_id, msg);
 				}
 			});

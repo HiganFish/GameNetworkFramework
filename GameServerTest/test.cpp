@@ -26,8 +26,8 @@ TEST(Message, MessageCodec)
 	}
 }
 
-static int PACK_SUM = 50;
-static int THREAD_NUM = 10;
+static int PACK_SUM = 0;
+static int THREAD_NUM = 2000;
 
 void foo () {
 	// BaseMessagePtr message_ptr = SpawnNewMessage<ControlMessage>(*ptr->base_message_ptr);
@@ -50,13 +50,11 @@ void foo () {
 						}*/
 }
 
+#define NOW_MS std::chrono::duration_cast<std::chrono::milliseconds>(	\
+std::chrono::system_clock::now().time_since_epoch()).count();
+
 void FooClient(asio::io_context& context)
 {
-	Buffer ping_buffer;
-	PingMessage ping_message;
-	ping_message.role_id = 101010;
-	ping_message.EncodeMessage(ping_buffer);
-
 	Buffer buffer;
 	ControlMessage message;
 	message.role_id = 101010;
@@ -68,6 +66,11 @@ void FooClient(asio::io_context& context)
 	asio::ip::tcp::resolver resolver(context);
 	auto endpoint = resolver.resolve("127.0.0.1", "40000");
 	std::vector<GameConnectionPtr> game_conn_vec;
+
+	Buffer ping_buffer;
+	PingMessage ping_message;
+	ping_message.role_id = 101010;
+
 	for (int i = 0; i < THREAD_NUM; ++i)
 	{
 		auto sock = asio::ip::tcp::socket(context);
@@ -79,11 +82,24 @@ void FooClient(asio::io_context& context)
 		game_conn_vec[i]->SetOnNewMsgWithBufferFunc(
 			[](BaseMsgWithBufferPtr&& ptr)
 			{
-				std::cout << std::format("{}\r\n", ptr->base_message_ptr->DebugMessage());
+				// std::cout << std::format("{}\r\n", ptr->base_message_ptr->DebugMessage());
+				if (ptr->base_message_ptr->message_type == MessageType::PING)
+				{
+					PingMessagePtr msg = std::dynamic_pointer_cast<PingMessage>(TransmitMessage(ptr));
+
+					uint64_t now = NOW_MS;
+					static int count = 0;
+					count++;
+					std::cout << std::format("ping-{}: {}ms\r\n", count, now - msg->timestamp);
+				}
 			});
 
-		game_conn_vec[i]->AsyncSendData(ping_buffer.ReadBegin(), ping_buffer.ReadableSize());
 		game_conn_vec[i]->StartRecvData();
+
+		ping_message.timestamp = NOW_MS;
+		ping_buffer.Reset();
+		ping_message.EncodeMessage(ping_buffer);
+		game_conn_vec[i]->AsyncSendData(ping_buffer.ReadBegin(), ping_buffer.ReadableSize());
 	}
 	std::cout << "begin send " << std::endl;
 
@@ -116,7 +132,7 @@ TEST(GameServer, RecvMsg)
 			FooClient(client_io);
 		});
 	
-	std::this_thread::sleep_for(std::chrono::seconds(2));
+	std::this_thread::sleep_for(std::chrono::seconds(5));
 
 	client_guard.reset();
 	client_io.stop();

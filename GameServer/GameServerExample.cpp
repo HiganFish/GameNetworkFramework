@@ -3,7 +3,7 @@
 
 void GameServerExample::Ping(ROLE_ID role_id, const BaseMessagePtr& msg)
 {
-	std::cout << "Ping\r\n";
+	// std::cout << "Ping\r\n";
 	SendMessageByRoleId(role_id, msg);
 }
 

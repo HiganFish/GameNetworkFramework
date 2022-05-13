@@ -19,7 +19,7 @@ public:
 	DEBUG_MSG_FUNC
 	{
 		return BaseMessage::DebugMessage(
-			std::format("role_id: {}", role_id));
+			std::format("timestamp: {}", timestamp));
 	}
 
 	DECODE_BODY_FUNC
@@ -34,4 +34,4 @@ private:
 		APPEND_NUMBER(buffer, timestamp);
 	}
 };
-using PlayerInitMessagePtr = std::shared_ptr<PingMessage>;
+using PingMessagePtr = std::shared_ptr<PingMessage>;
