@@ -6,7 +6,7 @@ TEST(Message, MessageCodec)
 	Buffer buffer;
 	
 	ControlMessage message;
-	message.player_id = 101010;
+	message.role_id = 101010;
 	message.tick = 1234;
 	message.control_type = ControlMessage::ControlType::DOWN;
 
@@ -52,14 +52,14 @@ void foo () {
 
 void FooClient(asio::io_context& context)
 {
-	Buffer init_buffer;
-	PlayerInitMessage init_message;
-	init_message.role_id = 101010;
-	init_message.EncodeMessage(init_buffer);
+	Buffer ping_buffer;
+	PingMessage ping_message;
+	ping_message.role_id = 101010;
+	ping_message.EncodeMessage(ping_buffer);
 
 	Buffer buffer;
 	ControlMessage message;
-	message.player_id = 101010;
+	message.role_id = 101010;
 	message.tick = 1234;
 	message.control_type = ControlMessage::ControlType::DOWN;
 	message.EncodeMessage(buffer);
@@ -76,13 +76,13 @@ void FooClient(asio::io_context& context)
 		conn->SetConnectionName("client conn: " + std::to_string(i));
 		game_conn_vec.emplace_back(std::make_shared<GameConnection>(conn));
 
-		game_conn_vec[i]->SetOnNewMsgWithBufferAndIdFunc(
-			[](BaseMsgWithBufferAndIdPtr&& ptr)
+		game_conn_vec[i]->SetOnNewMsgWithBufferFunc(
+			[](BaseMsgWithBufferPtr&& ptr)
 			{
 				std::cout << std::format("{}\r\n", ptr->base_message_ptr->DebugMessage());
 			});
 
-		game_conn_vec[i]->AsyncSendData(init_buffer.ReadBegin(), init_buffer.ReadableSize());
+		game_conn_vec[i]->AsyncSendData(ping_buffer.ReadBegin(), ping_buffer.ReadableSize());
 		game_conn_vec[i]->StartRecvData();
 	}
 	std::cout << "begin send " << std::endl;

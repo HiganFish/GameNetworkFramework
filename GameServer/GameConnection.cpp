@@ -7,7 +7,7 @@ GameConnection::GameConnection(const TcpConnectionPtr& connection):
 	role_id_(0),
 	connection_name_(tcp_connection_->GetConnectionName()),
 	recving_data_(false),
-	on_new_msg_with_buf_and_id_func_(nullptr)
+	on_new_msg_with_buf_func_(nullptr)
 {
 	tcp_connection_->SetOnNewDataFunc(
 		[this](auto&& PH1, auto&& PH2)
@@ -20,9 +20,9 @@ const std::string& GameConnection::GetConnectionName()
 	return connection_name_;
 }
 
-void GameConnection::SetOnNewMsgWithBufferAndIdFunc(const OnNewMsgWithBufferAndIdFunc& func)
+void GameConnection::SetOnNewMsgWithBufferFunc(const OnNewMsgWithBufferFunc& func)
 {
-	on_new_msg_with_buf_and_id_func_ = func;
+	on_new_msg_with_buf_func_ = func;
 }
 
 void GameConnection::AsyncSendData(const char* data, size_t length)
@@ -50,7 +50,7 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 	bool error = false;
 	while (data_enought && !error)
 	{
-		auto message_ptr = std::make_shared<BaseMsgWithBufferAndId>();
+		auto message_ptr = std::make_shared<BaseMsgWithBuffer>();
 		auto base_message_ptr = SpawnNewMessage<BaseMessage>();
 		message_ptr->base_message_ptr = base_message_ptr;
 		uint32_t body_size;
@@ -67,27 +67,24 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 		}
 		else
 		{
-			if (base_message_ptr->message_type == MessageType::PLAYER_INIT)
+			if (role_id_ == 0)
 			{
-				PlayerInitMessage msg;
-				msg.DecodeMsgBody(buffer.ReadBegin(), body_size);
-				role_id_ = msg.role_id;
+				role_id_ = base_message_ptr->role_id;
 				if (register_func_)
 				{
 					register_func_(role_id_, shared_from_this());
 				}
 			}
 			// TODO 关闭连接
-			assert(role_id_ != 0);
+			assert(role_id_ == base_message_ptr->role_id);
 
-			message_ptr->role_id = role_id_;
 			assert(buffer.ReadableSize() >= body_size);
 			message_ptr->body_buffer.AppendData(buffer.ReadBegin(), body_size);
 			buffer.AddReadIndex(body_size);
 
-			if (on_new_msg_with_buf_and_id_func_)
+			if (on_new_msg_with_buf_func_)
 			{
-				on_new_msg_with_buf_and_id_func_(std::move(message_ptr));
+				on_new_msg_with_buf_func_(std::move(message_ptr));
 			}
 		}
 	}

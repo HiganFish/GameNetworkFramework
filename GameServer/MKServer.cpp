@@ -16,8 +16,8 @@ MKServer::MKServer(const std::string& name, short port,
 			game_server_.SendMessageById(role_id, buffer.ReadBegin(), buffer.ReadableSize());
 		});
 
-	game_server_.SetOnNewMsgWithBufferAndIdFunc(
-		[this](BaseMsgWithBufferAndIdPtr&& ptr)
+	game_server_.SetOnNewMsgWithBufferFunc(
+		[this](auto&& ptr)
 		{
 			new_pack_queue_.Push(std::move(ptr));
 		});
@@ -34,15 +34,15 @@ void MKServer::Start()
 			{
 				while (started_)
 				{
-					BaseMsgWithBufferAndIdPtr ptr;
+					BaseMsgWithBufferPtr ptr;
 					bool has = new_pack_queue_.TryPop(ptr);
 					if (!has)
 					{
 						continue;
 					}
 					auto msg = TransmitMessage(ptr);
-					msg->base_message_ptr->DecodeMessageBody(ptr->body_buffer);
-					recv_msg_dispatcher_.Push(std::move(msg));
+					msg->DecodeMessageBody(ptr->body_buffer);
+					recv_msg_dispatcher_.Push(msg->role_id, msg);
 				}
 			});
 
@@ -72,6 +72,10 @@ void MKServer::SetMsgCallback(MessageType type,
 
 void MKServer::SendMessageByRoleId(ROLE_ID role_id, const BaseMessagePtr& msg_ptr)
 {
-	send_msg_dispatcher_.Push(
-		std::make_shared<BaseMsgWithRoleId>(role_id, msg_ptr));
+	send_msg_dispatcher_.Push(role_id, msg_ptr);
+}
+
+void MKServer::SendMessageByRoleIds(const std::vector<ROLE_ID>& role_ids, const BaseMessagePtr& msg_ptr)
+{
+	send_msg_dispatcher_.Push(role_ids, msg_ptr);
 }

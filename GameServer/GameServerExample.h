@@ -7,7 +7,7 @@ class GameServerExample : public MKServer
 public:
 	GameServerExample(const std::string& name, short port);
 
-	void PlayerInit(ROLE_ID role_id, const BaseMessagePtr& msg);
+	void Ping(ROLE_ID role_id, const BaseMessagePtr& msg);
 	void Control(ROLE_ID role_id, const BaseMessagePtr& msg);
 	void EnterRoom(ROLE_ID role_id, const BaseMessagePtr& msg);
 

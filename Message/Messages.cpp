@@ -3,21 +3,19 @@
 
 #define REGIST_MSG(a, b) case a:	\
 {	\
-	msg->base_message_ptr =	\
-		SpawnNewMessage<b>(std::move(*msg_ptr->base_message_ptr));	\
+	msg_ptr =	\
+		SpawnNewMessage<b>(std::move(*msg_with_buffer->base_message_ptr));	\
 	break;	\
 }
 
-BaseMsgWithRoleIdPtr TransmitMessage(BaseMsgWithBufferAndIdPtr msg_ptr)
+BaseMessagePtr TransmitMessage(BaseMsgWithBufferPtr msg_with_buffer)
 {
-	auto msg = std::make_shared<BaseMsgWithRoleId>();
-	msg->role_id = msg_ptr->role_id;
-
-	switch (msg_ptr->base_message_ptr->message_type)
+	BaseMessagePtr msg_ptr;
+	switch (msg_with_buffer->base_message_ptr->message_type)
 	{
 		REGIST_MSG(MessageType::CONTROL, ControlMessage)
-		REGIST_MSG(MessageType::PLAYER_INIT, PlayerInitMessage)
-		REGIST_MSG(MessageType::ENTER_ROOM, PlayerInitMessage)
+		REGIST_MSG(MessageType::PING, PingMessage)
+		REGIST_MSG(MessageType::ENTER_ROOM, EnterRoomMessage)
 	}
-	return msg;
+	return msg_ptr;
 }

@@ -4,6 +4,7 @@
 
 BaseMessage::BaseMessage() :
 	magic(MAGIC),
+	role_id(0),
 	version(0x00),
 	message_type(MessageType::DEFAULT)
 {
@@ -11,6 +12,7 @@ BaseMessage::BaseMessage() :
 
 BaseMessage::BaseMessage(BaseMessage&& old_message) noexcept :
 	magic(old_message.magic),
+	role_id(old_message.role_id),
 	version(old_message.version),
 	message_type(old_message.message_type)
 {
@@ -20,6 +22,7 @@ void BaseMessage::EncodeMessage(Buffer& buffer)
 {
 	size_t old_size = buffer.ReadableSize();
 	APPEND_NUMBER(buffer, magic);
+	APPEND_NUMBER(buffer, role_id);
 	APPEND_NUMBER(buffer, version);
 	APPEND_ENUM(buffer, message_type);
 
@@ -62,6 +65,7 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessageHeader(Buffer& buffer, uint3
 	}
 	buffer.AddReadIndex(sizeof(magic));
 
+	READ_NUMBER(buffer, role_id);
 	READ_NUMBER(buffer, version);
 	READ_ENUM(buffer, message_type);
 
@@ -81,6 +85,11 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessageHeader(Buffer& buffer, uint3
 
 std::string BaseMessage::DebugMessage(const std::string& body) const
 {
-	return std::format("[ magic: {}, version: {}, message_type: {} ] - {}",
-			magic, version, MessageTypeToString(message_type), body);
+	std::string fmt = "[ version: {}, role_id: {}, message_type: {} ] - {}";
+	if (body.empty())
+	{
+		fmt = "[ version: {}, role_id: {}, message_type: {} ]";
+	}
+	return std::format(fmt,
+		version, role_id, MessageTypeToString(message_type), body);
 }

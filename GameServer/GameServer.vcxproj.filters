@@ -36,9 +36,6 @@
     <ClCompile Include="TcpConnection.cpp">
       <Filter>network</Filter>
     </ClCompile>
-    <ClCompile Include="MsgThread.cpp">
-      <Filter>dispatch</Filter>
-    </ClCompile>
     <ClCompile Include="MsgDispatcher.cpp">
       <Filter>dispatch</Filter>
     </ClCompile>

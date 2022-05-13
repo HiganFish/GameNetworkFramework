@@ -16,7 +16,7 @@ public:
 
     void SetTryGetMessageFunc(const TryGetMessageFunc& func);
 
-    void SetOnNewMsgWithBufferAndIdFunc(const OnNewMsgWithBufferAndIdFunc& func);
+    void SetOnNewMsgWithBufferFunc(const OnNewMsgWithBufferFunc& func);
 
     void SendMessageById(ROLE_ID role_id, const char* data, size_t length);
 
@@ -30,5 +30,5 @@ private:
 
     TryGetMessageFunc try_get_message_func_;
 
-    OnNewMsgWithBufferAndIdFunc on_new_msg_with_id_func_;
+    OnNewMsgWithBufferFunc on_new_msg_with_buffer_func_;
 };

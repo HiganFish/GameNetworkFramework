@@ -25,12 +25,10 @@ struct ControlMessage : public BaseMessage
 		return iter == enumMap.end() ? "UNKNOWN" : iter->second;
 	}
 
-	uint32_t player_id;
 	uint32_t tick;
 	ControlType control_type;
 
 	ControlMessage():
-		player_id(0x12345678),
 		tick(0x12345678),
 		control_type(ControlType::DEFAULT)
 	{
@@ -43,15 +41,13 @@ struct ControlMessage : public BaseMessage
 	DEBUG_MSG_FUNC
 	{
 		return BaseMessage::DebugMessage(
-			std::format("player_id: {}, tick : {}, control_type : {}",
-				player_id,
+			std::format("tick : {}, control_type : {}",
 				tick,
 				ControlTypeToString(control_type)));
 	}
 
 	DECODE_BODY_FUNC
 	{
-		READ_NUMBER(buffer, player_id);
 		READ_NUMBER(buffer, tick);
 		READ_ENUM(buffer, control_type);
 	}
@@ -59,7 +55,6 @@ private:
 
 	ENCODE_DATA_FUNC
 	{
-		APPEND_NUMBER(buffer, player_id);
 		APPEND_NUMBER(buffer, tick);
 		APPEND_ENUM(buffer, control_type);
 	}

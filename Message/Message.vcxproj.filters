@@ -35,5 +35,8 @@
     <ClInclude Include="MessageUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PingMessage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

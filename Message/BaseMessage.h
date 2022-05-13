@@ -11,7 +11,7 @@ enum class MessageType : uint8_t
 	TYTE_MIN = 0,
 	DEFAULT,
 	CONTROL,
-	PLAYER_INIT,
+	PING,
 	ENTER_ROOM,
 	TYPE_MAX
 };
@@ -20,7 +20,7 @@ static std::string MessageTypeToString(MessageType type)
 {
 	static std::unordered_map<MessageType, std::string> enumMap
 	{ {MessageType::DEFAULT, "DEFAULT"},
-	{MessageType::PLAYER_INIT, "PLAYER_INIT"},
+	{MessageType::PING, "PING"},
 	{MessageType::ENTER_ROOM, "ENTER_ROOM"},
 	{MessageType::CONTROL, "CONTROL"}};
 
@@ -33,6 +33,7 @@ struct BaseMessage
 public:
 
 	uint32_t magic;
+	ROLE_ID role_id;
 	uint8_t version;
 	MessageType message_type;
 
@@ -61,6 +62,7 @@ private:
 	const static int MAX_PACK_SIZE = 4 * 1024;;
 	// 不含pack_size的头部长度
 	const static int HEADER_SIZE_NO_LENGTH = sizeof(magic) +
+		sizeof(role_id) + 
 		sizeof(version) + sizeof(message_type);
 	const static int MAGIC = 0x11000011;
 
@@ -71,14 +73,6 @@ private:
 };
 using BaseMessagePtr = std::shared_ptr<BaseMessage>;
 
-
-struct BaseMsgWithRoleId
-{
-	ROLE_ID role_id;
-	BaseMessagePtr base_message_ptr;
-};
-using BaseMsgWithRoleIdPtr = std::shared_ptr<BaseMsgWithRoleId>;
-
 struct BaseMsgWithBuffer
 {
 	TinyBuffer body_buffer;
@@ -86,14 +80,12 @@ struct BaseMsgWithBuffer
 };
 using BaseMsgWithBufferPtr = std::shared_ptr<BaseMsgWithBuffer>;
 
-struct BaseMsgWithBufferAndId
+struct BaseMsgSendPack
 {
-	ROLE_ID role_id;
-	TinyBuffer body_buffer;
+	std::vector<ROLE_ID> send_to;
 	BaseMessagePtr base_message_ptr;
 };
-using BaseMsgWithBufferAndIdPtr = std::shared_ptr<BaseMsgWithBufferAndId>;
-
+using BaseMsgSendPackPtr = std::shared_ptr<BaseMsgSendPack>;
 
 #define DECODE_CONSTRUCTOR(class_name) class_name \
 (BaseMessage&& base_message): BaseMessage(std::move(base_message)) {}

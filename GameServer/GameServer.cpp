@@ -8,7 +8,7 @@ GameServer::GameServer(const std::string& server_name, short port):
 void GameServer::OnNewTcpConnection(const TcpConnectionPtr& connection)
 {
 	auto game_connection_ptr = std::make_shared<GameConnection>(connection);
-	game_connection_ptr->SetOnNewMsgWithBufferAndIdFunc(on_new_msg_with_id_func_);
+	game_connection_ptr->SetOnNewMsgWithBufferFunc(on_new_msg_with_buffer_func_);
 	game_connection_ptr->SetRegisterFunc([this](auto&& PH1, auto&& PH2) {AddConnToRoleMap(PH1, PH2); });
 	{
 		std::unique_lock guard(conn_map_mutex_);
@@ -27,9 +27,9 @@ void GameServer::SetTryGetMessageFunc(const TryGetMessageFunc& func)
 	try_get_message_func_ = func;
 }
 
-void GameServer::SetOnNewMsgWithBufferAndIdFunc(const OnNewMsgWithBufferAndIdFunc& func)
+void GameServer::SetOnNewMsgWithBufferFunc(const OnNewMsgWithBufferFunc& func)
 {
-	on_new_msg_with_id_func_ = func;
+	on_new_msg_with_buffer_func_ = func;
 }
 
 void GameServer::SendMessageById(ROLE_ID role_id, const char* data, size_t length)
@@ -42,7 +42,7 @@ void GameServer::SendMessageById(ROLE_ID role_id, const char* data, size_t lengt
 	}
 	else
 	{
-		std::cout << std::format("unknown role_id: {}{}\r\n", role_id);
+		std::cout << std::format("unknown role_id: {}\r\n", role_id);
 	}
 }
 

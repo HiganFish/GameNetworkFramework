@@ -22,7 +22,7 @@ namespace this_coro = asio::this_coro;
 class GameConnection;
 using GameConnectionPtr = std::shared_ptr<GameConnection>;
 
-using OnNewMsgWithBufferAndIdFunc = std::function<void(BaseMsgWithBufferAndIdPtr&&)>;
+using OnNewMsgWithBufferFunc = std::function<void(BaseMsgWithBufferPtr&&)>;
 using TryGetMessageFunc = std::function<bool(BaseMessagePtr&)>;
 
 using RegisterRoleIdConnFunc = std::function<void(ROLE_ID role_id, const GameConnectionPtr&)>;

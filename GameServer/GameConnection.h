@@ -11,7 +11,7 @@ public:
 
 	const std::string& GetConnectionName();
 
-	void SetOnNewMsgWithBufferAndIdFunc(const OnNewMsgWithBufferAndIdFunc& func);
+	void SetOnNewMsgWithBufferFunc(const OnNewMsgWithBufferFunc& func);
 
 	void AsyncSendData(const char* data, size_t length);
 
@@ -24,7 +24,7 @@ private:
 	std::string connection_name_;
 	ROLE_ID role_id_;
 	RegisterRoleIdConnFunc register_func_;
-	OnNewMsgWithBufferAndIdFunc on_new_msg_with_buf_and_id_func_;
+	OnNewMsgWithBufferFunc on_new_msg_with_buf_func_;
 
 	bool recving_data_;
 
