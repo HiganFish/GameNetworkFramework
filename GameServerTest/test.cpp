@@ -27,7 +27,7 @@ TEST(Message, MessageCodec)
 }
 
 static int PACK_SUM = 0;
-static int THREAD_NUM = 2000;
+static int THREAD_NUM = 1000;
 
 void foo () {
 	// BaseMessagePtr message_ptr = SpawnNewMessage<ControlMessage>(*ptr->base_message_ptr);
@@ -52,6 +52,12 @@ void foo () {
 
 #define NOW_MS std::chrono::duration_cast<std::chrono::milliseconds>(	\
 std::chrono::system_clock::now().time_since_epoch()).count();
+
+static uint64_t sum_delay = 0;
+static uint64_t start_time = 0;
+static uint64_t end_time = 0;
+static uint64_t send_end_time = 0;
+static int count = 0;
 
 void FooClient(asio::io_context& context)
 {
@@ -88,9 +94,14 @@ void FooClient(asio::io_context& context)
 					PingMessagePtr msg = std::dynamic_pointer_cast<PingMessage>(TransmitMessage(ptr));
 
 					uint64_t now = NOW_MS;
-					static int count = 0;
+					end_time = now;
+
+					uint64_t delay = now - msg->timestamp;
 					count++;
-					std::cout << std::format("ping-{}: {}ms\r\n", count, now - msg->timestamp);
+
+					std::cout << std::format("{}-{}\r\n", count, delay);
+
+					sum_delay += delay;
 				}
 			});
 
@@ -100,6 +111,11 @@ void FooClient(asio::io_context& context)
 		ping_buffer.Reset();
 		ping_message.EncodeMessage(ping_buffer);
 		game_conn_vec[i]->AsyncSendData(ping_buffer.ReadBegin(), ping_buffer.ReadableSize());
+		if (start_time == 0)
+		{
+			start_time = ping_message.timestamp;
+		}
+		send_end_time = NOW_MS;
 	}
 	std::cout << "begin send " << std::endl;
 
@@ -133,7 +149,8 @@ TEST(GameServer, RecvMsg)
 		});
 	
 	std::this_thread::sleep_for(std::chrono::seconds(5));
-
+	std::cout << std::format("ping-{}: avg {}ms, send cost: {}ms, sum cost: {}ms\r\n",
+		count, sum_delay / count, send_end_time - start_time, end_time - start_time);
 	client_guard.reset();
 	client_io.stop();
 	mkserver->Stop();
