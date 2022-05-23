@@ -172,6 +172,7 @@
     <ClInclude Include="NetworkCommon.h" />
     <ClInclude Include="TcpConnection.h" />
     <ClInclude Include="ThreadSafeQueue.h" />
+    <ClInclude Include="TimeUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Buffer\Buffer.vcxproj">

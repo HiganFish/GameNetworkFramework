@@ -44,12 +44,6 @@ public:
 
 	void EncodeMessage(Buffer& buffer);
 
-	/*
-	解析数据包
-	false n 解析出错
-	true 0 数据不足
-	true n 解析成功 消耗n字节数据
-	*/
 	std::pair<bool, uint32_t> DecodeMessageHeader(Buffer& buffer,
 		uint32_t* body_size = nullptr);
 	virtual void DecodeMessageBody(Buffer& buffer) { }
@@ -58,17 +52,12 @@ public:
 
 private:
 
-	// const static int HEADER_SIZE = sizeof(data_size_);
 	const static int MAX_PACK_SIZE = 4 * 1024;;
-	// 不含pack_size的头部长度
 	const static int HEADER_SIZE_NO_LENGTH = sizeof(magic) +
 		sizeof(role_id) + 
 		sizeof(version) + sizeof(message_type);
 	const static int MAGIC = 0x11000011;
 
-	// 数据包长度 不含pack_size本身
-	// 位于序列化后数据的起始位置
-	// uint32_t pack_size;
 	virtual void EncodeData(Buffer& buffer) {}
 };
 using BaseMessagePtr = std::shared_ptr<BaseMessage>;

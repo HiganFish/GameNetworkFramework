@@ -10,7 +10,7 @@ constexpr int DEFAULT_BUFFER_SIZE = 4096;
 constexpr int IDX_BEGIN = 8;
 
 /**
- * 通用缓冲区
+ * common buffer
 */
 class Buffer
 {
@@ -25,9 +25,6 @@ public:
 	void AddWriteIndex(size_t index);
 	void AddReadIndex(size_t index);
 
-	/**
-	 * 丢弃所有未读数据
-	 */
 	void DropAllData();
 
 	char* WriteBegin();
@@ -36,9 +33,6 @@ public:
 
 	void AdjustBuffer();
 
-	/**
-	 * 重置Buffer 清除所有数据 重置总读写字节数
-	 */
 	void Reset();
 
 	void ReSize(size_t new_size);

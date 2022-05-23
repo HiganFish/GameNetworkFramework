@@ -80,5 +80,8 @@
     <ClInclude Include="ThreadSafeQueue.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="TimeUtils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

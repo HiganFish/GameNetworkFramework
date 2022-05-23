@@ -28,7 +28,7 @@ void BaseMessage::EncodeMessage(Buffer& buffer)
 
 	EncodeData(buffer);
 
-	// 数据包长度放于起始位置
+	// put pack length at begin pos
 	buffer.PreAppendNumber(
 		static_cast<uint32_t>(buffer.ReadableSize() - old_size));
 }
@@ -43,13 +43,11 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessageHeader(Buffer& buffer, uint3
 	}
 
 	PEEK_NUMBER(buffer, pack_size);
-	// 数据过大
 	if (pack_size > MAX_PACK_SIZE)
 	{
 		std::cout << "pack_size > MAX_PACK_SIZE" << std::endl;
 		return { false, 0 };
 	}
-	// data_size 不包含其本身大小 数据不足
 	if (buffer.ReadableSize() < pack_size + sizeof(pack_size))
 	{
 		return { true, 0 };

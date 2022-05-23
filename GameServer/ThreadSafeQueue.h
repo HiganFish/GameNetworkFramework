@@ -36,7 +36,7 @@ public:
 	bool TryPop(T& t, const std::chrono::milliseconds& timeout = std::chrono::milliseconds(10))
 	{
 		std::unique_lock lock(queue_mutex_);
-		while (deque_.empty()) // 防止wait_for也会出现的虚假唤醒
+		while (deque_.empty())
 		{
 			if (cond_.wait_for(lock, timeout) == std::cv_status::timeout)
 			{

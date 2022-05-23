@@ -1,18 +1,28 @@
 #include "GameServerExample.h"
 #include "Messages.h"
+#include "TimeUtils.h"
 
-void GameServerExample::Ping(ROLE_ID role_id, const BaseMessagePtr& msg)
+void GameServerExample::Ping(ROLE_ID role_id, BaseMessagePtr msg)
 {
+	PingMessagePtr ping_ptr = CastBaseMsgTo<PingMessage>(msg);
 	// std::cout << "Ping\r\n";
+	static int count = 0;
+	count++;
+	printf("%lld\r\n", NOW_MS - ping_ptr->timestamp);
+	if (count >= 100)
+	{
+		printf("---\r\n");
+		count = 0;
+	}
 	SendMessageByRoleId(role_id, msg);
 }
 
-void GameServerExample::Control(ROLE_ID role_id, const BaseMessagePtr& msg)
+void GameServerExample::Control(ROLE_ID role_id, BaseMessagePtr msg)
 {
 	std::cout << "Control\r\n";
 }
 
-void GameServerExample::EnterRoom(ROLE_ID role_id, const BaseMessagePtr& msg)
+void GameServerExample::EnterRoom(ROLE_ID role_id, BaseMessagePtr msg)
 {
 	std::cout << "EnterRoom\r\n";
 }

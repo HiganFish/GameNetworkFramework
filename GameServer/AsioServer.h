@@ -67,7 +67,7 @@ private:
         {
             std::ostringstream stream;
             stream << server_name_ << "#" << socket.remote_endpoint();
-            // 注意move后 socket不能再次使用
+            // after move cannot be used
             auto connection_ptr = std::make_shared<TcpConnection>(std::move(socket));
 
             std::string connection_name = stream.str();

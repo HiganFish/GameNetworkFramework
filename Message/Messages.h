@@ -16,3 +16,9 @@ BaseMessagePtr SpawnNewMessage(Args&&...args)
 转换完成后，自动对消息体进行解析
 */
 BaseMessagePtr TransmitMessage(BaseMsgWithBufferPtr msg_ptr);
+
+template <typename T>
+std::shared_ptr<T> CastBaseMsgTo(const BaseMessagePtr& msg)
+{
+	return std::dynamic_pointer_cast<T>(msg);
+}

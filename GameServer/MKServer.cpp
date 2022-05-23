@@ -9,7 +9,7 @@ MKServer::MKServer(const std::string& name, short port,
 	started_(false)
 {
 	send_msg_dispatcher_.SetDefaultMsgCallback(
-		[this](ROLE_ID role_id, const BaseMessagePtr& ptr)
+		[this](ROLE_ID role_id, BaseMessagePtr ptr)
 		{
 			TinyBuffer buffer;
 			ptr->EncodeMessage(buffer);

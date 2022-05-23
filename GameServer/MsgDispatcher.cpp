@@ -44,16 +44,16 @@ bool MsgDispatcher::Start()
 		return false;
 	}
 	started_ = true;
-	// msg_threads_如果直接保存 MsgThread而不是其指针
-	// 由于MsgThread禁止拷贝构造 会导致编译无法通过
+	// because copy constructor deleted, resize vec will be error
 	// https://stackoverflow.com/questions/27470827/why-does-stdvectorreserve-call-the-copy-constructor
 	msg_threads_.reserve(thread_num_);
-	for (int i = 0; i < thread_num_; ++i)
+	for (uint32_t i = 0; i < thread_num_; ++i)
 	{
 		auto msg_thread_ptr = 
 			std::make_shared<MsgThread<MsgForDispatch>>(started_, [this](auto&& PH1) {Dispatch(PH1); });
 		msg_threads_.push_back(msg_thread_ptr);
 	}
+	return true;
 }
 
 void MsgDispatcher::Stop()
@@ -74,7 +74,7 @@ void MsgDispatcher::Dispatch(MsgForDispatch& msg)
 	{
 		func = default_message_callback_;
 	}
-	func(role_id, msg_ptr);
+	func(role_id, std::move(msg_ptr));
 }
 
 void MsgDispatcher::SetMsgCallback(MessageType msg_type, const MsgCallback& callback)
