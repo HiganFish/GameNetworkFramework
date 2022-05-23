@@ -5,7 +5,6 @@
 void GameServerExample::Ping(ROLE_ID role_id, BaseMessagePtr msg)
 {
 	PingMessagePtr ping_ptr = CastBaseMsgTo<PingMessage>(msg);
-	// std::cout << "Ping\r\n";
 	static int count = 0;
 	count++;
 	printf("%lld\r\n", NOW_MS - ping_ptr->timestamp);

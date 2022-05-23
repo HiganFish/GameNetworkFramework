@@ -48,7 +48,10 @@ public:
 		return true;
 	}
 
-
+	size_t Size() const
+	{
+		return deque_.size();
+	}
 private:
 	std::mutex queue_mutex_;
 	std::condition_variable  cond_;

@@ -19,7 +19,9 @@ MKServer::MKServer(const std::string& name, short port,
 	game_server_.SetOnNewMsgWithBufferFunc(
 		[this](auto&& ptr)
 		{
-			new_pack_queue_.Push(std::move(ptr));
+			// new_pack_queue_.Push(std::move(ptr));
+			auto msg = TransmitMessage(ptr);
+			recv_msg_dispatcher_.Push(msg->role_id, msg);
 		});
 }
 
@@ -29,7 +31,7 @@ void MKServer::Start()
 	{
 		started_ = true;
 
-		decode_thread_ = std::thread(
+		/*decode_thread_ = std::thread(
 			[this]()
 			{
 				while (started_)
@@ -43,7 +45,7 @@ void MKServer::Start()
 					auto msg = TransmitMessage(ptr);
 					recv_msg_dispatcher_.Push(msg->role_id, msg);
 				}
-			});
+			});*/
 
 		recv_msg_dispatcher_.Start();
 		send_msg_dispatcher_.Start();
@@ -58,7 +60,7 @@ void MKServer::Stop()
 		started_ = false;
 		recv_msg_dispatcher_.Stop();
 		send_msg_dispatcher_.Stop();
-		decode_thread_.join();
+		// decode_thread_.join();
 		game_server_.Stop();
 	}
 }

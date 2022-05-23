@@ -27,9 +27,9 @@ TEST(Message, MessageCodec)
 	}
 }
 
-static int PLAYER_NUM = 100;
+static int PLAYER_NUM = 1000;
 static int PACK_PER_PLAYER_PER_SEC = 20;
-static int TEST_TIME = 10;
+static int TEST_TIME = 5;
 static int SUM_PACK = TEST_TIME * PACK_PER_PLAYER_PER_SEC * PLAYER_NUM;
 
 static uint64_t sum_delay = 0;
@@ -37,7 +37,6 @@ static int count = 0;
 
 void FooClient(asio::io_context& context)
 {
-	asio::ip::tcp::socket socket(context);
 	asio::ip::tcp::resolver resolver(context);
 	auto endpoint = resolver.resolve("127.0.0.1", "40000");
 	// auto endpoint = resolver.resolve("192.168.50.200", "6666");
@@ -77,6 +76,8 @@ void FooClient(asio::io_context& context)
 	}
 	std::cout << "begin send " << std::endl;
 
+	std::thread run_thread([&context]() {context.run(); });
+
 	for (int time = 0; time < TEST_TIME; ++time)
 	{
 		auto begin_time = std::chrono::system_clock::now();
@@ -94,12 +95,13 @@ void FooClient(asio::io_context& context)
 				}
 			}
 			// sleep
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000 / PACK_PER_PLAYER_PER_SEC));
 		}
 		auto end_time = std::chrono::system_clock::now();
 		printf("%lld\r\n", 
 			TO_US(end_time - begin_time).count());
 	}
-	context.run();
+	run_thread.join();
 }
 
 TEST(GameServer, RecvMsg)

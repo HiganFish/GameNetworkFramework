@@ -37,6 +37,7 @@ public:
 			bool has_pack = msg_queue_.TryPop(msg_ptr);
 			if (has_pack && dispatch_func_)
 			{
+				// printf("%p-%zu\r\n", this, msg_queue_.Size());
 				dispatch_func_(msg_ptr);
 			}
 		}
