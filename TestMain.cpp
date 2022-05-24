@@ -26,9 +26,9 @@ void EncodeTest()
 	}
 }
 
-static int PLAYER_NUM = 200;
+static int PLAYER_NUM = 100;
 static int PACK_PER_PLAYER_PER_SEC = 20;
-static int TEST_TIME = 10;
+static int TEST_TIME = 5;
 static int SUM_PACK = TEST_TIME * PACK_PER_PLAYER_PER_SEC * PLAYER_NUM;
 
 static uint64_t sum_delay = 0;
@@ -63,6 +63,7 @@ void FooClient(asio::io_context& context)
 					uint64_t now = NOW_MS;
 
 					uint64_t delay = now - msg->timestamp;
+					// printf("%d\r\n", delay);
 					count++;
 
 					sum_delay += delay;
@@ -140,7 +141,7 @@ void GameServerTest()
 		    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	    }
 	    std::cout << fmt::format("ping-{}: avg {}ms\r\n",
-			    count, sum_delay / count);
+			    count, static_cast<float>(sum_delay) / count);
 	    client_guard.reset();
 	    client_io.stop();
 	    mkserver->Stop();

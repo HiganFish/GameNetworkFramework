@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.22)
 project(GameProject)
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS -stdlib=libc++)
+set(CMAKE_CXX_STANDARD 17)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS -stdlib=libc++)
+endif()
 
 # undefined reference to `std::result_of`
 add_definitions(-DASIO_HAS_STD_INVOKE_RESULT)
@@ -49,7 +51,12 @@ set(GAME_SERVER_SRC
 add_library(server ${GAME_SERVER_SRC})
 target_compile_options(server PUBLIC -DASIO_STANDALONE)
 target_include_directories(server PUBLIC ${ASIO_INCLUDE})
-target_link_libraries(server PUBLIC message utils pthread)
+
+if (WIN32)
+    target_link_libraries(server PUBLIC message utils wsock32 ws2_32)
+else()
+    target_link_libraries(server PUBLIC message utils pthread)
+endif()
 
 add_executable(GameServerTest TestMain.cpp)
 target_link_libraries(GameServerTest PRIVATE server)

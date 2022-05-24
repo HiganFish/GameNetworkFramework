@@ -10,7 +10,7 @@ class MKServer
 {
 public:
 	
-	MKServer(const std::string& name, ushort port,
+	MKServer(const std::string& name, unsigned short port,
 		int recv_thread_num, int send_thread_num);
 	MKServer(const MKServer&) = delete;
 	MKServer& operator=(const MKServer&) = delete;

@@ -55,7 +55,7 @@ private:
 	const static int MAX_PACK_SIZE = 4 * 1024;;
 	const static int HEADER_SIZE_NO_LENGTH = sizeof(magic) +
 		sizeof(role_id) + 
-		sizeof(version) + sizeof(message_type);
+		sizeof(version) + sizeof(ENUM_TO_NUM(message_type));
 	const static int MAGIC = 0x11000011;
 
 	virtual void EncodeData(Buffer& buffer) {}

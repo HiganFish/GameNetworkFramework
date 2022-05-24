@@ -26,7 +26,7 @@ void GameServerExample::EnterRoom(ROLE_ID role_id, BaseMessagePtr msg)
 	std::cout << "EnterRoom\r\n";
 }
 
-GameServerExample::GameServerExample(const std::string& name, ushort port):
+GameServerExample::GameServerExample(const std::string& name, unsigned short port):
 	MKServer(name, port, 10, 10)
 {
 	SET_MSG_FUNC(MessageType::PING, Ping);

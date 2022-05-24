@@ -12,7 +12,10 @@ public:
     AsioServer(const std::string& server_name, short port):
         started_(false),
         server_name_(server_name),
-        port_(port)
+        port_(port),
+        ep_(asio::ip::tcp::v4(), port_),
+        acceptor_(io_context_, ep_),
+        client_socket_(io_context_)
     {
     }
     virtual ~AsioServer()
@@ -29,7 +32,12 @@ public:
             
             asio::signal_set signals(io_context_, SIGINT, SIGTERM);
             signals.async_wait([&](auto, auto) { io_context_.stop(); });
-            co_spawn(io_context_, Listener(), detached);
+
+#if __cplusplus > 202002L
+	        co_spawn(io_context_, Listener(), detached);
+#else
+			Listener();
+#endif
             io_context_.run();
         }
         catch (std::exception& e)
@@ -61,7 +69,15 @@ private:
         asio::make_work_guard(io_context_)};
     std::unordered_map<std::string, TcpConnectionPtr> tcp_connection_map_;
 
-    awaitable<void> OnNewClient(tcp::socket socket)
+	asio::ip::tcp::endpoint ep_;
+	asio::ip::tcp::acceptor acceptor_;
+
+#if __cplusplus > 202002L
+#else
+	asio::ip::tcp::socket client_socket_;
+#endif
+
+	awaitable_void OnNewClient(asio::ip::tcp::socket socket)
     {
         try
         {
@@ -83,16 +99,26 @@ private:
         co_return;
     }
 
-    awaitable<void> Listener()
+	awaitable_void Listener()
     {
-        auto executor = co_await this_coro::executor;
-        tcp::endpoint ep(tcp::v4(), port_);
-        tcp::acceptor acceptor(executor, ep);
+#if __cplusplus > 202002L
+		auto executor = co_await this_coro::executor;
         for (;;)
         {
-            tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
+	        asio::ip::tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
             co_spawn(socket.get_executor(), OnNewClient(std::move(socket)), detached);
         }
+#else
+		acceptor_.async_accept(client_socket_,
+				[this](std::error_code ec)
+		{
+			if (!ec)
+			{
+				OnNewClient(std::move(client_socket_));
+			}
+			Listener();
+		});
+#endif
     }
 
 };

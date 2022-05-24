@@ -4,11 +4,12 @@
 
 constexpr bool IsLittleEndian()
 {
-    union
+    union Foo
     {
         int i1 = 0x12345678;
         char c1;
-    } foo;
+    };
+	constexpr Foo foo{};
     return foo.c1 == 0x78;
 }
 

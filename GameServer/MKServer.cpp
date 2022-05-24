@@ -1,7 +1,7 @@
 #include <memory>
 #include "MKServer.h"
 
-MKServer::MKServer(const std::string& name, ushort port,
+MKServer::MKServer(const std::string& name, unsigned short port,
 	int recv_thread_num, int send_thread_num) :
 	game_server_(name, port),
 	recv_msg_dispatcher_(recv_thread_num),
