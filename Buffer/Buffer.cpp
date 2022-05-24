@@ -51,12 +51,14 @@ void Buffer::AddReadIndex(size_t index)
 
 char* Buffer::WriteBegin()
 {
-	return &buffer_[write_idx_];
+	// Error when buffer_ is full
+	// return &buffer_[write_idx_];
+	return Begin() + write_idx_;
 }
 
 const char* Buffer::ReadBegin() const
 {
-	return &buffer_[read_idx_];
+	return Begin() + read_idx_;
 }
 
 void Buffer::AdjustBuffer()

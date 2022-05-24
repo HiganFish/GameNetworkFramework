@@ -26,9 +26,9 @@ void EncodeTest()
 	}
 }
 
-static int PLAYER_NUM = 1000;
+static int PLAYER_NUM = 200;
 static int PACK_PER_PLAYER_PER_SEC = 20;
-static int TEST_TIME = 5;
+static int TEST_TIME = 10;
 static int SUM_PACK = TEST_TIME * PACK_PER_PLAYER_PER_SEC * PLAYER_NUM;
 
 static uint64_t sum_delay = 0;
@@ -78,6 +78,7 @@ void FooClient(asio::io_context& context)
 	for (int time = 0; time < TEST_TIME; ++time)
 	{
 		auto begin_time = std::chrono::system_clock::now();
+		size_t sum_send_size = 0;
 		for (int pack_sub = 0; pack_sub < PACK_PER_PLAYER_PER_SEC; ++pack_sub)
 		{
 			auto frame_begin_time = NOW_MS;
@@ -87,18 +88,26 @@ void FooClient(asio::io_context& context)
 					ping_message.timestamp = NOW_MS;
 					ping_buffer.Reset();
 					ping_message.EncodeMessage(ping_buffer);
-
+					sum_send_size += ping_buffer.ReadableSize();
 					game_conn_vec[player_sub]->AsyncSendData(ping_buffer.ReadBegin(), ping_buffer.ReadableSize());
 				}
 			}
 			auto frame_end_time = NOW_MS;
 			// sleep
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000 / PACK_PER_PLAYER_PER_SEC -
-				(frame_end_time - frame_begin_time)));
+			int sleep_ms = 1000 / PACK_PER_PLAYER_PER_SEC -
+			               (frame_end_time - frame_begin_time);
+			if (sleep_ms > 0)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
+			}
+			else
+			{
+				printf("Error\r\n");
+			}
 		}
 		auto end_time = std::chrono::system_clock::now();
-		printf("%lld ms\r\n",
-				TO_MS(end_time - begin_time).count());
+		printf("%lld ms, %zu B\r\n",
+				TO_MS(end_time - begin_time).count(), sum_send_size);
 	}
 	run_thread.join();
 }
@@ -114,29 +123,31 @@ void GameServerTest()
 			server.Start();
 		});
 
+    if (true)
+    {
+	    std::this_thread::sleep_for(std::chrono::seconds(1));
+	    asio::io_context client_io;
+	    asio::executor_work_guard<asio::io_context::executor_type> client_guard{
+			    asio::make_work_guard(client_io) };
+	    std::thread t2(
+			    [&client_io]()
+			    {
+				    FooClient(client_io);
+			    });
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-	asio::io_context client_io;
-	asio::executor_work_guard<asio::io_context::executor_type> client_guard{
-		asio::make_work_guard(client_io) };
-	std::thread t2(
-		[&client_io]()
-		{
-			FooClient(client_io);
-		});
-
-	while (count != SUM_PACK)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	    while (count != SUM_PACK)
+	    {
+		    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	    }
+	    std::cout << fmt::format("ping-{}: avg {}ms\r\n",
+			    count, sum_delay / count);
+	    client_guard.reset();
+	    client_io.stop();
+	    mkserver->Stop();
+	    t2.join();
 	}
-	std::cout << fmt::format("ping-{}: avg {}ms\r\n",
-		count, sum_delay / count);
-	client_guard.reset();
-	client_io.stop();
 
-	mkserver->Stop();
 	t1.join();
-	t2.join();
 }
 
 int main()

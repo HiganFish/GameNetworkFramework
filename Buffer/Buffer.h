@@ -96,7 +96,12 @@ private:
 
 	char* Begin()
 	{
-		return buffer_.data();
+		return &*buffer_.begin();
+	}
+
+	const char* Begin() const
+	{
+		return &*buffer_.begin();
 	}
 };
 
