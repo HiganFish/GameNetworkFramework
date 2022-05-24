@@ -1,5 +1,5 @@
 #include "GameConnection.h"
-#include "Messages.h"
+#include "Message/Messages.h"
 
 GameConnection::GameConnection(const TcpConnectionPtr& connection):
 	tcp_connection_(connection),

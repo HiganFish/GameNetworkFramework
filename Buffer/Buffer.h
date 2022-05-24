@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <cassert>
+#include <utility>
 
 #include "ByteOrder.h"
 
@@ -67,16 +68,16 @@ public:
 	T ReadNumber()
 	{
 		T result = PeekNumber<T>();
-		AddReadIndex(sizeof T);
+		AddReadIndex(sizeof(T));
 ;		return result;
 	}
 
 	template <typename T>
 	T PeekNumber()
 	{
-		assert(ReadableSize() >= sizeof T);
+		assert(ReadableSize() >= sizeof(T));
 		T result;
-		memcpy(&result, ReadBegin(), sizeof T);
+		memcpy(&result, ReadBegin(), sizeof(T));
 		return ntoh(result);
 	}
 

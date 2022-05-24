@@ -3,7 +3,7 @@
 #include <thread>
 #include <functional>
 #include "ThreadSafeQueue.h"
-#include "Messages.h"
+#include "Message/Messages.h"
 
 template <typename MSG_PTR>
 class MsgThread

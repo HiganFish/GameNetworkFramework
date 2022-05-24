@@ -83,11 +83,11 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessageHeader(Buffer& buffer, uint3
 
 std::string BaseMessage::DebugMessage(const std::string& body) const
 {
-	std::string fmt = "[ version: {}, role_id: {}, message_type: {} ] - {}";
 	if (body.empty())
 	{
-		fmt = "[ version: {}, role_id: {}, message_type: {} ]";
+		return fmt::format("[ version: {}, role_id: {}, message_type: {} ]",
+				version, role_id, MessageTypeToString(message_type), body);
 	}
-	return std::format(fmt,
+	return fmt::format("[ version: {}, role_id: {}, message_type: {} ] - {}",
 		version, role_id, MessageTypeToString(message_type), body);
 }

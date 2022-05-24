@@ -19,7 +19,7 @@ public:
 	DEBUG_MSG_FUNC
 	{
 		return BaseMessage::DebugMessage(
-			std::format("timestamp: {}", timestamp));
+			fmt::format("timestamp: {}", timestamp));
 	}
 
 	DECODE_BODY_FUNC

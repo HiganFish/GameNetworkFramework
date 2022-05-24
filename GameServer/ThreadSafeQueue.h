@@ -3,6 +3,7 @@
 #include <queue>
 #include <mutex>
 #include <chrono>
+#include <condition_variable>
 
 template <typename T>
 class ThreadSafeQueue

@@ -1,6 +1,5 @@
 #pragma once
-#define _WIN32_WINNT 0x0601
-#include <asio.hpp>
+#include <asio.cpp>
 
 using asio::ip::tcp;
 using asio::awaitable;
@@ -16,7 +15,7 @@ namespace this_coro = asio::this_coro;
 
 #include <memory>
 #include <functional>
-#include "BaseMessage.h"
+#include "Message/BaseMessage.h"
 
 
 class GameConnection;

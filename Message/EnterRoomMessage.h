@@ -18,7 +18,7 @@ public:
 		DEBUG_MSG_FUNC
 	{
 		return BaseMessage::DebugMessage(
-			std::format("room_id: {}", room_id));
+			fmt::format("room_id: {}", room_id));
 	}
 
 	DECODE_BODY_FUNC

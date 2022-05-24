@@ -5,8 +5,8 @@
 #include <iostream>
 #include <functional>
 
-#include "Buffer.h"
-#include "BaseMessage.h"
+#include "Buffer/Buffer.h"
+#include "Message/BaseMessage.h"
 #include "NetworkCommon.h"
 
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>

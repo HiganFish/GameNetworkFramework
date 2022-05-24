@@ -1,5 +1,3 @@
-#pragma once
-
 #include "GameServerExample.h"
 
 int main()

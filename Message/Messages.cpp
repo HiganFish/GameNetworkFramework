@@ -1,4 +1,3 @@
-#pragma once
 #include "Messages.h"
 
 #define REGIST_MSG(a, b) case a:	\
@@ -16,6 +15,8 @@ BaseMessagePtr TransmitMessage(BaseMsgWithBufferPtr msg_with_buffer)
 		REGIST_MSG(MessageType::CONTROL, ControlMessage)
 		REGIST_MSG(MessageType::PING, PingMessage)
 		REGIST_MSG(MessageType::ENTER_ROOM, EnterRoomMessage)
+	default:
+		return msg_ptr;
 	}
 	msg_ptr->DecodeMessageBody(msg_with_buffer->body_buffer);
 	return msg_ptr;

@@ -41,7 +41,7 @@ struct ControlMessage : public BaseMessage
 	DEBUG_MSG_FUNC
 	{
 		return BaseMessage::DebugMessage(
-			std::format("tick : {}, control_type : {}",
+			fmt::format("tick : {}, control_type : {}",
 				tick,
 				ControlTypeToString(control_type)));
 	}

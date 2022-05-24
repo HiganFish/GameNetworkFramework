@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Buffer.h"
+#include "Buffer/Buffer.h"
 
 constexpr int TINY_BUFFER_DEFAULT_BUFFER_SIZE = 64;
 
