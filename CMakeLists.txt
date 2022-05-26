@@ -12,8 +12,8 @@ add_definitions(-DASIO_HAS_STD_INVOKE_RESULT)
 add_definitions(-DFMT_HEADER_ONLY)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-set(ASIO_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/Third/asio/include)
-set(FMT_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/Third/fmt/include)
+set(ASIO_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/Third/asio)
+set(FMT_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/Third/fmt)
 message(${FMT_INCLUDE})
 
 set(BUFFER_SRC
