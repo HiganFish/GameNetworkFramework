@@ -2,8 +2,8 @@
 
 #include <cstdio>
 
-#include "NetworkCommon.h"
-#include "TcpConnection.h"
+#include "Network/NetworkCommon.h"
+#include "Network/TcpConnection.h"
 
 class AsioServer
 {

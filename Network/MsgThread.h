@@ -2,7 +2,7 @@
 
 #include <thread>
 #include <functional>
-#include "ThreadSafeQueue.h"
+#include "Utils/ThreadSafeQueue.h"
 #include "Message/Messages.h"
 
 template <typename MSG_PTR>

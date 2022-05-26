@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.19)
 project(GameProject)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -18,8 +18,7 @@ message(${FMT_INCLUDE})
 
 set(BUFFER_SRC
     Buffer/Buffer.cpp
-    Buffer/ByteOrder.h
-        Utils/TimeUtils.cpp)
+    Buffer/ByteOrder.h)
 add_library(buffer ${BUFFER_SRC})
 
 set(MESSAGE_SRC
@@ -36,26 +35,31 @@ target_include_directories(message PUBLIC ${FMT_INCLUDE})
 
 set(UTILS_SRC
     Utils/TimeUtils.cpp
+    Utils/ThreadSafeQueue.h
 )
 add_library(utils ${UTILS_SRC})
 
+set(NETWORK
+    Network/GameConnection.cpp
+    Network/MsgDispatcher.cpp
+    Network/TcpConnection.cpp
+)
+add_library(network ${NETWORK})
+target_include_directories(network PUBLIC ${FMT_INCLUDE} ${ASIO_INCLUDE})
+
 set(GAME_SERVER_SRC
-    GameServer/GameConnection.cpp
     GameServer/GameServer.cpp
     GameServer/GameServerExample.cpp
-    GameServer/main.cpp
     GameServer/MKServer.cpp
-    GameServer/MsgDispatcher.cpp
-    GameServer/TcpConnection.cpp
 )
 add_library(server ${GAME_SERVER_SRC})
 target_compile_options(server PUBLIC -DASIO_STANDALONE)
 target_include_directories(server PUBLIC ${ASIO_INCLUDE})
 
 if (WIN32)
-    target_link_libraries(server PUBLIC message utils wsock32 ws2_32)
+    target_link_libraries(server PUBLIC network message utils wsock32 ws2_32)
 else()
-    target_link_libraries(server PUBLIC message utils pthread)
+    target_link_libraries(server PUBLIC network message utils pthread)
 endif()
 
 add_executable(GameServerTest TestMain.cpp)

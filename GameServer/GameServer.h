@@ -2,7 +2,7 @@
 
 #include <shared_mutex>
 #include "AsioServer.h"
-#include "GameConnection.h"
+#include "Network/GameConnection.h"
 
 class GameServer : public AsioServer
 {

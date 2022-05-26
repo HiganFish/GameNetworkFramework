@@ -1,7 +1,7 @@
 #pragma once
 #include <thread>
 #include "GameServer.h"
-#include "MsgDispatcher.h"
+#include "Network/MsgDispatcher.h"
 
 #define SET_MSG_FUNC(type, func_name) \
 SetMsgCallback(type, [this](auto&& PH1, auto&& PH2) {func_name(PH1, PH2); });
