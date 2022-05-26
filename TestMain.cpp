@@ -45,7 +45,7 @@ void FooClient(GameClient& client)
 	ping_message_ptr->role_id = 101010;
 
 	client.SetMsgCallback(MessageType::PING,
-			[](ROLE_ID role_id, BaseMessagePtr message_ptr)
+			[](ROLE_ID role_id, const BaseMessagePtr& message_ptr)
 			{
 				PingMessagePtr msg = CastBaseMsgTo<PingMessage>(message_ptr);
 				uint64_t now = NOW_MS;

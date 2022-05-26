@@ -39,42 +39,48 @@ set(UTILS_SRC
 )
 add_library(utils ${UTILS_SRC})
 
-set(NETWORK
+set(NETWORK_SRC
     Network/GameConnection.cpp
     Network/MsgDispatcher.cpp
     Network/TcpConnection.cpp
 )
-add_library(network ${NETWORK})
+add_library(network ${NETWORK_SRC})
 target_include_directories(network PUBLIC ${FMT_INCLUDE} ${ASIO_INCLUDE})
 
 set(GAME_CLIENT_SRC
     GameClient/GameClient.cpp
 )
+
+set(GAME_SERVER_SRC
+        GameServer/GameServer.cpp
+        GameServer/GameServerExample.cpp
+        GameServer/MKServer.cpp
+)
+
 add_library(client STATIC ${GAME_CLIENT_SRC})
 target_compile_options(client PUBLIC -DASIO_STANDALONE)
 target_include_directories(client PRIVATE ${ASIO_INCLUDE})
-if (WIN32)
-    target_link_libraries(client PRIVATE network message utils wsock32 ws2_32)
-else()
-    target_link_libraries(client PRIVATE network message utils pthread)
-endif()
 
-
-set(GAME_SERVER_SRC
-    GameServer/GameServer.cpp
-    GameServer/GameServerExample.cpp
-    GameServer/MKServer.cpp
-)
 add_library(server STATIC ${GAME_SERVER_SRC})
 target_compile_options(server PRIVATE -DASIO_STANDALONE)
 target_include_directories(server PRIVATE ${ASIO_INCLUDE})
+
 if (WIN32)
+    target_link_libraries(client PRIVATE network message utils wsock32 ws2_32)
     target_link_libraries(server PRIVATE network message utils wsock32 ws2_32)
+
+    add_library(client_pack STATIC ${NETWORK_SRC} ${BUFFER_SRC}
+            ${UTILS_SRC} ${GAME_CLIENT_SRC} ${MESSAGE_SRC})
+    target_compile_options(client_pack PRIVATE -DASIO_STANDALONE)
+    target_include_directories(client_pack PRIVATE ${ASIO_INCLUDE} ${FMT_INCLUDE})
 else()
+    target_link_libraries(client PRIVATE network message utils pthread)
     target_link_libraries(server PRIVATE network message utils pthread)
 endif()
 
-add_executable(GameServerTest TestMain.cpp)
-target_include_directories(GameServerTest PUBLIC ${ASIO_INCLUDE} ${FMT_INCLUDE})
-target_link_libraries(GameServerTest PUBLIC server client)
-
+set(TESTS TestServer TestMain)
+foreach(TEST ${TESTS})
+    add_executable(${TEST} ${TEST}.cpp)
+    target_include_directories(${TEST} PUBLIC ${ASIO_INCLUDE} ${FMT_INCLUDE})
+    target_link_libraries(${TEST} PUBLIC server client)
+endforeach()
