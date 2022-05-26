@@ -9,7 +9,7 @@ void EncodeTest()
 	ControlMessage message;
 	message.role_id = 101010;
 	message.tick = 1234;
-	message.control_type = ControlMessage::ControlType::DOWN;
+	message.move_direction = ControlMessage::MoveDirection::DOWN;
 
 	std::cout << message.DebugMessage() << std::endl;
 

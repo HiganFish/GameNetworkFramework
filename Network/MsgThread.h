@@ -50,7 +50,6 @@ public:
 
 	void Join()
 	{
-		assert(!started_);
 		thread_.join();
 	}
 

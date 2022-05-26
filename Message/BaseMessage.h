@@ -19,7 +19,7 @@ enum class MessageType : uint8_t
 static std::string MessageTypeToString(MessageType type)
 {
 	static std::unordered_map<MessageType, std::string> enumMap
-	{ {MessageType::DEFAULT, "DEFAULT"},
+	{ {MessageType::DEFAULT, "NONE"},
 	{MessageType::PING, "PING"},
 	{MessageType::ENTER_ROOM, "ENTER_ROOM"},
 	{MessageType::CONTROL, "CONTROL"}};

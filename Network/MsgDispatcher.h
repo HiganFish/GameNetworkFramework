@@ -14,7 +14,7 @@ using MsgForDispatchPtr = std::shared_ptr<MsgForDispatch>;
 class MsgDispatcher
 {
 public:
-	using MsgCallback = std::function<void(ROLE_ID, BaseMessagePtr)>;
+	using MsgCallback = std::function<void(ROLE_ID, const BaseMessagePtr&)>;
 
 	MsgDispatcher(uint32_t thread_num);
 	MsgDispatcher(const MsgDispatcher&) = delete;

@@ -6,7 +6,7 @@
 #include "EnterRoomMessage.h"
 
 template <typename T, typename...Args>
-BaseMessagePtr SpawnNewMessage(Args&&...args)
+std::shared_ptr<T> SpawnNewMessage(Args&&...args)
 {
 	return std::make_shared<T>(std::forward<Args>(args)...);
 }

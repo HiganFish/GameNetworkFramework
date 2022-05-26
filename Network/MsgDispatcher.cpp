@@ -68,7 +68,7 @@ void MsgDispatcher::Stop()
 void MsgDispatcher::Dispatch(MsgForDispatch& msg)
 {
 	auto msg_ptr = msg.base_message_ptr;
-	auto role_id = msg_ptr->role_id;
+	auto role_id = msg.dispatch_id;
 	auto func = msg_callbacks_[static_cast<int>(msg_ptr->message_type)];
 	if (!func)
 	{

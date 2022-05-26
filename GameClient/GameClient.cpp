@@ -4,21 +4,32 @@
 #include <fmt/format.h>
 #include "GameClient.h"
 #include "Message/Messages.h"
+#include "Utils/TimeUtils.h"
 
 GameClient::GameClient(const std::string& client_name):
-	context_(),
-	client_guard_(asio::make_work_guard(context_)),
-	client_name_(client_name),
-	conn_map_(),
-	recv_msg_dispatcher_(1)
+		context_(),
+		client_guard_(asio::make_work_guard(context_)),
+		client_name_(client_name),
+		conn_map_(),
+		recv_msg_dispatcher_(1),
+		delay_ms_(0),
+		ping_message_ptr_(nullptr)
 {
 	run_thread_ = std::thread([this](){context_.run();});
+
+	recv_msg_dispatcher_.SetMsgCallback(MessageType::PING,
+			[this](ROLE_ID role_id, const BaseMessagePtr& ping_msg_ptr)
+			{
+				PingMessagePtr ptr = CastBaseMsgTo<PingMessage>(ping_msg_ptr);
+				delay_ms_ = NOW_MS - ptr->timestamp;
+			});
+
 	recv_msg_dispatcher_.Start();
 }
 
-bool GameClient::Connect(const std::string& conn_name, const std::string& address, const std::string& port)
+bool GameClient::Connect(ROLE_ID role_id, const std::string& address, const std::string& port)
 {
-	auto iter = conn_map_.find(conn_name);
+	auto iter = conn_map_.find(role_id);
 	if (iter != conn_map_.end())
 	{
 		return false;
@@ -26,7 +37,7 @@ bool GameClient::Connect(const std::string& conn_name, const std::string& addres
 	auto tcp_conn = Connect(address, port);
 	if (tcp_conn)
 	{
-		tcp_conn->SetConnectionName(conn_name);
+		tcp_conn->SetConnectionName(client_name_ + "-"+ std::to_string(role_id));
 		auto connection = std::make_shared<GameConnection>(tcp_conn);
 		connection->SetOnNewMsgWithBufferFunc([this](auto&& ptr)
 		{
@@ -35,7 +46,7 @@ bool GameClient::Connect(const std::string& conn_name, const std::string& addres
 			recv_msg_dispatcher_.Push(msg->role_id, msg);
 		});
 		connection->StartRecvData();
-		conn_map_[conn_name] = connection;
+		conn_map_[role_id] = connection;
 		return true;
 	}
 	return false;
@@ -75,9 +86,9 @@ void GameClient::SetMsgCallback(MessageType type, const MsgDispatcher::MsgCallba
 	recv_msg_dispatcher_.SetMsgCallback(type, callback);
 }
 
-void GameClient::SendMsg(const std::string& conn_name, const BaseMessagePtr& msg_ptr)
+void GameClient::SendMsg(ROLE_ID role_id, const BaseMessagePtr& msg_ptr)
 {
-	auto conn = conn_map_.find(conn_name);
+	auto conn = conn_map_.find(role_id);
 	if (conn != conn_map_.end())
 	{
 		TinyBuffer buffer;
@@ -86,6 +97,22 @@ void GameClient::SendMsg(const std::string& conn_name, const BaseMessagePtr& msg
 	}
 	else
 	{
-		std::cout << fmt::format("conn: {} not exist", conn_name) << std::endl;
+		std::cout << fmt::format("conn: {} not exist", role_id) << std::endl;
 	}
+}
+
+void GameClient::TestDelay(int32_t role_id)
+{
+	if (!ping_message_ptr_)
+	{
+		ping_message_ptr_ = std::make_shared<PingMessage>();
+	}
+	ping_message_ptr_->role_id = role_id;
+	ping_message_ptr_->timestamp = NOW_MS;
+	SendMsg(role_id, ping_message_ptr_);
+}
+
+int32_t GameClient::GetDelayMs() const
+{
+	return delay_ms_;
 }

@@ -2,7 +2,7 @@
 #include "Message/Messages.h"
 #include "Utils/TimeUtils.h"
 
-void GameServerExample::Ping(ROLE_ID role_id, BaseMessagePtr msg)
+void GameServerExample::Ping(ROLE_ID role_id, const BaseMessagePtr& msg)
 {
 	PingMessagePtr ping_ptr = CastBaseMsgTo<PingMessage>(msg);
 //	static int count = 0;
@@ -16,12 +16,21 @@ void GameServerExample::Ping(ROLE_ID role_id, BaseMessagePtr msg)
 	SendMessageByRoleId(role_id, msg);
 }
 
-void GameServerExample::Control(ROLE_ID role_id, BaseMessagePtr msg)
+void GameServerExample::Control(ROLE_ID role_id, const BaseMessagePtr& msg)
 {
-	std::cout << "Control\r\n";
+	ControlMessagePtr control_ptr = CastBaseMsgTo<ControlMessage>(msg);
+	if (control_ptr->move_direction == ControlMessage::MoveDirection::NONE)
+	{
+		role_ids.push_back(role_id);
+		std::cout << fmt::format("add a new role: {}\r\n", role_id);
+	}
+	else
+	{
+		SendMessageByRoleIds(role_ids, msg);
+	}
 }
 
-void GameServerExample::EnterRoom(ROLE_ID role_id, BaseMessagePtr msg)
+void GameServerExample::EnterRoom(ROLE_ID role_id, const BaseMessagePtr& msg)
 {
 	std::cout << "EnterRoom\r\n";
 }

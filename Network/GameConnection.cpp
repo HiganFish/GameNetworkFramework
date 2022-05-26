@@ -76,7 +76,7 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 				}
 			}
 			// TODO 关闭连接
-			assert(role_id_ == base_message_ptr->role_id);
+			// assert(role_id_ == base_message_ptr->role_id);
 
 			assert(buffer.ReadableSize() >= body_size);
 			message_ptr->body_buffer.AppendData(buffer.ReadBegin(), body_size);
