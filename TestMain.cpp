@@ -41,46 +41,37 @@ void FooClient(GameClient& client)
 	std::string port = "40000";
 	std::vector<GameClientPtr> game_client_vec;
 
-	Buffer ping_buffer;
-	PingMessage ping_message;
-	ping_message.role_id = 101010;
+	PingMessagePtr ping_message_ptr = std::make_shared<PingMessage>();
+	ping_message_ptr->role_id = 101010;
+
+	client.SetMsgCallback(MessageType::PING,
+			[](ROLE_ID role_id, BaseMessagePtr message_ptr)
+			{
+				PingMessagePtr msg = CastBaseMsgTo<PingMessage>(message_ptr);
+				uint64_t now = NOW_MS;
+
+				uint64_t delay = now - msg->timestamp;
+				count++;
+				sum_delay += delay;
+			});
 
 	for (int i = 0; i < PLAYER_NUM; ++i)
 	{
-		client.Connect(std::to_string(i), address, port,
-				[](BaseMsgWithBufferPtr&& ptr)
-				{
-					if (ptr->base_message_ptr->message_type == MessageType::PING)
-					{
-						PingMessagePtr msg = std::dynamic_pointer_cast<PingMessage>(TransmitMessage(ptr));
-
-						uint64_t now = NOW_MS;
-
-						uint64_t delay = now - msg->timestamp;
-						count++;
-						sum_delay += delay;
-					}
-				}
-		);
+		client.Connect(std::to_string(i), address, port);
 	}
 	std::cout << "begin send " << std::endl;
 
 	for (int time = 0; time < TEST_TIME; ++time)
 	{
 		auto begin_time = std::chrono::system_clock::now();
-		size_t sum_send_size = 0;
 		for (int pack_sub = 0; pack_sub < PACK_PER_PLAYER_PER_SEC; ++pack_sub)
 		{
 			auto frame_begin_time = NOW_MS;
 			{
 				for (int player_sub = 0; player_sub < PLAYER_NUM; ++player_sub)
 				{
-					ping_message.timestamp = NOW_MS;
-					ping_buffer.Reset();
-					ping_message.EncodeMessage(ping_buffer);
-					sum_send_size += ping_buffer.ReadableSize();
-					client.AsyncSendData(std::to_string(player_sub),
-							ping_buffer.ReadBegin(), ping_buffer.ReadableSize());
+					ping_message_ptr->timestamp = NOW_MS;
+					client.SendMsg(std::to_string(player_sub), ping_message_ptr);
 				}
 			}
 			auto frame_end_time = NOW_MS;
@@ -97,8 +88,8 @@ void FooClient(GameClient& client)
 			}
 		}
 		auto end_time = std::chrono::system_clock::now();
-		printf("%lld ms, %zu B\r\n",
-				TO_MS(end_time - begin_time).count(), sum_send_size);
+		printf("%lld ms\r\n",
+				TO_MS(end_time - begin_time).count());
 	}
 }
 

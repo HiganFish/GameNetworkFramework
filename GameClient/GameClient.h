@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include "Network/GameConnection.h"
 #include "Network/NetworkCommon.h"
+#include "Network/MsgDispatcher.h"
 
 class GameClient
 {
@@ -19,14 +20,14 @@ public:
 	GameClient(const GameClient&) = delete;
 	GameClient& operator=(const GameClient&) = delete;
 
-	bool Connect(const std::string& conn_name,
-			const std::string& address, const std::string& port,
-			const OnNewMsgWithBufferFunc& func);
+	bool Connect(const std::string& conn_name, const std::string& address, const std::string& port);
 
-	void AsyncSendData(const std::string& conn_name,
-			const char* data, size_t length);
 
 	void Stop();
+
+	void SetMsgCallback(MessageType type, const MsgDispatcher::MsgCallback& callback);
+
+	void SendMsg(const std::string& conn_name, const BaseMessagePtr& msg_ptr);
 
 private:
 	asio::io_context context_;
@@ -36,10 +37,11 @@ private:
 
 	std::string client_name_;
 
+	MsgDispatcher recv_msg_dispatcher_;
+
 	std::unordered_map<std::string, GameConnectionPtr> conn_map_;
 
-	TcpConnectionPtr Connect(const std::string& address, const std::string& port,
-			const OnNewMsgWithBufferFunc& func);
+	TcpConnectionPtr Connect(const std::string& address, const std::string& port);
 };
 using GameClientPtr = std::shared_ptr<GameClient>;
 

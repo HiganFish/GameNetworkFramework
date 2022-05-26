@@ -31,22 +31,6 @@ void MKServer::Start()
 	{
 		started_ = true;
 
-		/*decode_thread_ = std::thread(
-			[this]()
-			{
-				while (started_)
-				{
-					BaseMsgWithBufferPtr ptr;
-					bool has = new_pack_queue_.TryPop(ptr);
-					if (!has)
-					{
-						continue;
-					}
-					auto msg = TransmitMessage(ptr);
-					recv_msg_dispatcher_.Push(msg->role_id, msg);
-				}
-			});*/
-
 		recv_msg_dispatcher_.Start();
 		send_msg_dispatcher_.Start();
 		game_server_.Start();
