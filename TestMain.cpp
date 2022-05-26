@@ -1,4 +1,5 @@
 #include "GameServer/GameServerExample.h"
+#include "GameClient/GameClient.h"
 #include "Utils/TimeUtils.h"
 
 void EncodeTest()
@@ -34,12 +35,11 @@ static int SUM_PACK = TEST_TIME * PACK_PER_PLAYER_PER_SEC * PLAYER_NUM;
 static uint64_t sum_delay = 0;
 static int count = 0;
 
-void FooClient(asio::io_context& context)
+void FooClient(GameClient& client)
 {
-	asio::ip::tcp::resolver resolver(context);
-	auto endpoint = resolver.resolve("127.0.0.1", "40000");
-	// auto endpoint = resolver.resolve("192.168.50.200", "6666");
-	std::vector<GameConnectionPtr> game_conn_vec;
+	std::string address = "127.0.0.1";
+	std::string port = "40000";
+	std::vector<GameClientPtr> game_client_vec;
 
 	Buffer ping_buffer;
 	PingMessage ping_message;
@@ -47,34 +47,23 @@ void FooClient(asio::io_context& context)
 
 	for (int i = 0; i < PLAYER_NUM; ++i)
 	{
-		auto sock = asio::ip::tcp::socket(context);
-		asio::connect(sock, endpoint);
-		auto conn = std::make_shared<TcpConnection>(std::move(sock));
-		conn->SetConnectionName("client conn: " + std::to_string(i));
-		game_conn_vec.emplace_back(std::make_shared<GameConnection>(conn));
-
-		game_conn_vec[i]->SetOnNewMsgWithBufferFunc(
-			[](BaseMsgWithBufferPtr&& ptr)
-			{
-				if (ptr->base_message_ptr->message_type == MessageType::PING)
+		client.Connect(std::to_string(i), address, port,
+				[](BaseMsgWithBufferPtr&& ptr)
 				{
-					PingMessagePtr msg = std::dynamic_pointer_cast<PingMessage>(TransmitMessage(ptr));
+					if (ptr->base_message_ptr->message_type == MessageType::PING)
+					{
+						PingMessagePtr msg = std::dynamic_pointer_cast<PingMessage>(TransmitMessage(ptr));
 
-					uint64_t now = NOW_MS;
+						uint64_t now = NOW_MS;
 
-					uint64_t delay = now - msg->timestamp;
-					// printf("%d\r\n", delay);
-					count++;
-
-					sum_delay += delay;
+						uint64_t delay = now - msg->timestamp;
+						count++;
+						sum_delay += delay;
+					}
 				}
-			});
-
-		game_conn_vec[i]->StartRecvData();
+		);
 	}
 	std::cout << "begin send " << std::endl;
-
-	std::thread run_thread([&context]() {context.run(); });
 
 	for (int time = 0; time < TEST_TIME; ++time)
 	{
@@ -90,7 +79,8 @@ void FooClient(asio::io_context& context)
 					ping_buffer.Reset();
 					ping_message.EncodeMessage(ping_buffer);
 					sum_send_size += ping_buffer.ReadableSize();
-					game_conn_vec[player_sub]->AsyncSendData(ping_buffer.ReadBegin(), ping_buffer.ReadableSize());
+					client.AsyncSendData(std::to_string(player_sub),
+							ping_buffer.ReadBegin(), ping_buffer.ReadableSize());
 				}
 			}
 			auto frame_end_time = NOW_MS;
@@ -110,41 +100,37 @@ void FooClient(asio::io_context& context)
 		printf("%lld ms, %zu B\r\n",
 				TO_MS(end_time - begin_time).count(), sum_send_size);
 	}
-	run_thread.join();
 }
 
 void GameServerTest()
 {
-	MKServer* mkserver;
+	GameServerExample server("TestServer", 40000);
+	GameClient client("TestClient");
 	std::thread t1(
-		[&mkserver]()
+		[&server]()
 		{
-			GameServerExample server("TestServer", 40000);
-			mkserver = &server;
 			server.Start();
 		});
 
     if (true)
     {
 	    std::this_thread::sleep_for(std::chrono::seconds(1));
-	    asio::io_context client_io;
-	    asio::executor_work_guard<asio::io_context::executor_type> client_guard{
-			    asio::make_work_guard(client_io) };
 	    std::thread t2(
-			    [&client_io]()
+			    [&client]()
 			    {
-				    FooClient(client_io);
+				    FooClient(client);
 			    });
 
 	    while (count != SUM_PACK)
 	    {
-		    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+			std::cout << count << std::endl;
 	    }
 	    std::cout << fmt::format("ping-{}: avg {}ms\r\n",
 			    count, static_cast<float>(sum_delay) / count);
-	    client_guard.reset();
-	    client_io.stop();
-	    mkserver->Stop();
+
+	    server.Stop();
+	    client.Stop();
 	    t2.join();
 	}
 

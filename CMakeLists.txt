@@ -47,21 +47,34 @@ set(NETWORK
 add_library(network ${NETWORK})
 target_include_directories(network PUBLIC ${FMT_INCLUDE} ${ASIO_INCLUDE})
 
+set(GAME_CLIENT_SRC
+    GameClient/GameClient.cpp
+)
+add_library(client STATIC ${GAME_CLIENT_SRC})
+target_compile_options(client PUBLIC -DASIO_STANDALONE)
+target_include_directories(client PRIVATE ${ASIO_INCLUDE})
+if (WIN32)
+    target_link_libraries(client PRIVATE network message utils wsock32 ws2_32)
+else()
+    target_link_libraries(client PRIVATE network message utils pthread)
+endif()
+
+
 set(GAME_SERVER_SRC
     GameServer/GameServer.cpp
     GameServer/GameServerExample.cpp
     GameServer/MKServer.cpp
 )
-add_library(server ${GAME_SERVER_SRC})
-target_compile_options(server PUBLIC -DASIO_STANDALONE)
-target_include_directories(server PUBLIC ${ASIO_INCLUDE})
-
+add_library(server STATIC ${GAME_SERVER_SRC})
+target_compile_options(server PRIVATE -DASIO_STANDALONE)
+target_include_directories(server PRIVATE ${ASIO_INCLUDE})
 if (WIN32)
-    target_link_libraries(server PUBLIC network message utils wsock32 ws2_32)
+    target_link_libraries(server PRIVATE network message utils wsock32 ws2_32)
 else()
-    target_link_libraries(server PUBLIC network message utils pthread)
+    target_link_libraries(server PRIVATE network message utils pthread)
 endif()
 
 add_executable(GameServerTest TestMain.cpp)
-target_link_libraries(GameServerTest PRIVATE server)
+target_include_directories(GameServerTest PUBLIC ${ASIO_INCLUDE} ${FMT_INCLUDE})
+target_link_libraries(GameServerTest PUBLIC server client)
 
