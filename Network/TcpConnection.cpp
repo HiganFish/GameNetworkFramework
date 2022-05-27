@@ -1,7 +1,9 @@
 #include "TcpConnection.h"
 
 TcpConnection::TcpConnection(asio::ip::tcp::socket socket):
-    socket_(std::move(socket))
+    socket_(std::move(socket)),
+    on_new_data_func_(nullptr),
+	on_conn_close_func_(nullptr)
 {
 }
 
@@ -12,8 +14,13 @@ void TcpConnection::AsyncWaitData()
         {
             if (ec)
             {
-                // std::cout << "read data error, " << ec.message() << std::endl;
-                // TODO handle error close connection
+				if (asio::error::eof == ec || asio::error::connection_reset == ec)
+				{
+					if (on_conn_close_func_)
+					{
+						on_conn_close_func_(shared_from_this());
+					}
+				}
                 return;
             }
             buffer_.AddWriteIndex(read_length);
@@ -57,4 +64,9 @@ void TcpConnection::SetConnectionName(const std::string& connection_name)
 const std::string& TcpConnection::GetConnectionName() const
 {
     return connection_name_;
+}
+
+void TcpConnection::SetOnConnCloseFunc(const OnTcpConnectionCloseFunc& onConnCloseFunc)
+{
+	on_conn_close_func_ = onConnCloseFunc;
 }

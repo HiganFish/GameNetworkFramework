@@ -14,12 +14,49 @@ void GameServer::OnNewTcpConnection(const TcpConnectionPtr& connection)
 		std::unique_lock guard(conn_map_mutex_);
 		game_connection_map_.insert({ game_connection_ptr->GetConnectionName(), game_connection_ptr });
 	}
+	game_connection_ptr->SetOnGameConnCloseFunc([this](auto&& PH1)
+	{
+		OnConnectionClose(PH1);
+	});
 
 	game_connection_ptr->StartRecvData();
 }
 
-void GameServer::OnConnectionError(const TcpConnectionPtr& connection)
+void GameServer::OnConnectionClose(const GameConnectionPtr & connection)
 {
+	auto role_id = connection->GetRoleId();
+	{
+		std::unique_lock guard(role_id_map_mutex_);
+		auto iter = role_id_conn_map_.find(role_id);
+		if (iter == role_id_conn_map_.end())
+		{
+			std::cout << "connection close error, role id not exist" << std::endl;
+			return;
+		}
+		else
+		{
+			role_id_conn_map_.erase(iter);
+		}
+	}
+	{
+		std::unique_lock guard(conn_map_mutex_);
+		auto iter = game_connection_map_.find(connection->GetConnectionName());
+		if (iter == game_connection_map_.end())
+		{
+			std::cout << "connection close error, game conn not exist" << std::endl;
+			return;
+		}
+		else
+		{
+			game_connection_map_.erase(iter);
+		}
+	}
+	if (on_role_disconnct_func_)
+	{
+		on_role_disconnct_func_(role_id);
+	}
+	std::cout << "game conn: " << connection->GetConnectionName() <<
+		" closed, role_id: " << role_id << std::endl;
 }
 
 void GameServer::SetTryGetMessageFunc(const TryGetMessageFunc& func)
@@ -50,4 +87,9 @@ void GameServer::AddConnToRoleMap(ROLE_ID role_id, const GameConnectionPtr& conn
 {
 	std::unique_lock guard(role_id_map_mutex_);
 	role_id_conn_map_[role_id] = conn;
+}
+
+void GameServer::SetOnRoleDisconnectFunc(const OnRoleDisconnectFunc& func)
+{
+	on_role_disconnct_func_ = func;
 }

@@ -17,6 +17,7 @@ public:
 	using MsgCallback = std::function<void(ROLE_ID, const BaseMessagePtr&)>;
 
 	MsgDispatcher(uint32_t thread_num);
+	~MsgDispatcher();
 	MsgDispatcher(const MsgDispatcher&) = delete;
 	MsgDispatcher& operator=(const MsgDispatcher&) = delete;
 

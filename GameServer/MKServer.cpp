@@ -65,3 +65,8 @@ void MKServer::SendMessageByRoleIds(const std::vector<ROLE_ID>& role_ids, const 
 {
 	send_msg_dispatcher_.Push(role_ids, msg_ptr);
 }
+
+void MKServer::SetOnRoleDisconnectFunc(const OnRoleDisconnectFunc& func)
+{
+	game_server_.SetOnRoleDisconnectFunc(func);
+}

@@ -9,6 +9,13 @@ GameConnection::GameConnection(const TcpConnectionPtr& connection):
 	recving_data_(false),
 	on_new_msg_with_buf_func_(nullptr)
 {
+	tcp_connection_->SetOnConnCloseFunc([this](auto&& PH1)
+	{
+		if (on_game_conn_close_func_)
+		{
+			on_game_conn_close_func_(shared_from_this());
+		}
+	});
 	tcp_connection_->SetOnNewDataFunc(
 		[this](auto&& PH1, auto&& PH2)
 		{
@@ -88,4 +95,14 @@ void GameConnection::OnNewData(const TcpConnectionPtr& connection, Buffer& buffe
 			}
 		}
 	}
+}
+
+void GameConnection::SetOnGameConnCloseFunc(const OnGameConnectionCloseFunc& onGameConnCloseFunc)
+{
+	on_game_conn_close_func_ = onGameConnCloseFunc;
+}
+
+int32_t GameConnection::GetRoleId() const
+{
+	return role_id_;
 }

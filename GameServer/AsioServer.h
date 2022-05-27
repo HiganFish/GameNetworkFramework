@@ -56,10 +56,6 @@ public:
     {
     }
 
-    virtual void OnConnectionError(const TcpConnectionPtr& connection)
-    {
-    }
-
 private:
     bool started_;
     std::string server_name_;

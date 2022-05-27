@@ -15,7 +15,7 @@ class GameClient
 {
 public:
 	explicit GameClient(const std::string& client_name);
-	~GameClient() = default;
+	~GameClient();
 
 	GameClient(const GameClient&) = delete;
 	GameClient& operator=(const GameClient&) = delete;
@@ -46,6 +46,8 @@ private:
 
 	uint32_t delay_ms_;
 	PingMessagePtr ping_message_ptr_;
+
+	bool running_;
 
 	TcpConnectionPtr Connect(const std::string& address, const std::string& port);
 };

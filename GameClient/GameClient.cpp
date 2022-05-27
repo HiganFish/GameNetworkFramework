@@ -13,7 +13,8 @@ GameClient::GameClient(const std::string& client_name):
 		conn_map_(),
 		recv_msg_dispatcher_(1),
 		delay_ms_(0),
-		ping_message_ptr_(nullptr)
+		ping_message_ptr_(nullptr),
+		running_(true)
 {
 	run_thread_ = std::thread([this](){context_.run();});
 
@@ -25,6 +26,14 @@ GameClient::GameClient(const std::string& client_name):
 			});
 
 	recv_msg_dispatcher_.Start();
+}
+
+GameClient::~GameClient()
+{
+	if (running_)
+	{
+		Stop();
+	}
 }
 
 bool GameClient::Connect(ROLE_ID role_id, const std::string& address, const std::string& port)
@@ -75,6 +84,7 @@ TcpConnectionPtr GameClient::Connect(const std::string& address, const std::stri
 
 void GameClient::Stop()
 {
+	running_ = false;
 	recv_msg_dispatcher_.Stop();
 	client_guard_.reset();
 	context_.stop();

@@ -24,6 +24,7 @@ public:
 	void SendMessageByRoleId(ROLE_ID role_id, const BaseMessagePtr& msg_ptr);
 	void SendMessageByRoleIds(const std::vector<ROLE_ID>& role_ids, const BaseMessagePtr& msg_ptr);
 
+	void SetOnRoleDisconnectFunc(const OnRoleDisconnectFunc& func);
 private:
 
 	GameServer game_server_;

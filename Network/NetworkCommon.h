@@ -37,3 +37,6 @@ class TcpConnection;
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
 using OnNewMessageFunc = std::function<void(BaseMessagePtr&&)>;
 using OnNewDataFunc = std::function<void(const TcpConnectionPtr&, Buffer&)>;
+using OnTcpConnectionCloseFunc = std::function<void(const TcpConnectionPtr&)>;
+using OnGameConnectionCloseFunc = std::function<void(const GameConnectionPtr&)>;
+using OnRoleDisconnectFunc = std::function<void(ROLE_ID)>;

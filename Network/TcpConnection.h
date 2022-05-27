@@ -27,6 +27,8 @@ public:
 
 	void SetOnNewDataFunc(const OnNewDataFunc& func);
 
+	void SetOnConnCloseFunc(const OnTcpConnectionCloseFunc& onConnCloseFunc);
+
 	void SetConnectionName(const std::string& connection_name);
 
 	const std::string& GetConnectionName() const;
@@ -42,4 +44,6 @@ private:
 	std::string connection_name_;
 
 	OnNewDataFunc on_new_data_func_;
+
+	OnTcpConnectionCloseFunc on_conn_close_func_;
 };

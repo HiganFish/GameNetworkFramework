@@ -18,6 +18,14 @@ MsgDispatcher::MsgDispatcher(uint32_t thread_num) :
 {
 }
 
+MsgDispatcher::~MsgDispatcher()
+{
+	if (started_)
+	{
+		Stop();
+	}
+}
+
 void MsgDispatcher::Push(ROLE_ID dispatch_id, const BaseMessagePtr& msg)
 {
 	if (!msg || !started_)
