@@ -13,7 +13,6 @@ MKServer::MKServer(const std::string& name, unsigned short port,
 		{
 			TinyBuffer buffer;
 			ptr->EncodeMessage(buffer);
-			std::cout << fmt::format("role_id: {}, msg: {}\r\n", role_id, ptr->DebugMessage());
 			game_server_.SendMessageById(role_id, buffer.ReadBegin(), buffer.ReadableSize());
 		});
 
