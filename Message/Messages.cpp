@@ -15,6 +15,7 @@ BaseMessagePtr TransmitMessage(BaseMsgWithBufferPtr msg_with_buffer)
 		REGIST_MSG(MessageType::CONTROL, ControlMessage)
 		REGIST_MSG(MessageType::PING, PingMessage)
 		REGIST_MSG(MessageType::ENTER_ROOM, EnterRoomMessage)
+		REGIST_MSG(MessageType::GAME_START, GameStartMessage)
 	default:
 		return msg_ptr;
 	}

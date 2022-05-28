@@ -1,6 +1,8 @@
 //
 // Created by rjd
 //
+#include <thread>
+#include <condition_variable>
 #include <fmt/format.h>
 #include "GameClient.h"
 #include "Message/Messages.h"
@@ -14,7 +16,8 @@ GameClient::GameClient(const std::string& client_name):
 		recv_msg_dispatcher_(1),
 		delay_ms_(0),
 		ping_message_ptr_(nullptr),
-		running_(true)
+		running_(true),
+		has_delay_(true)
 {
 	run_thread_ = std::thread([this](){context_.run();});
 
@@ -23,6 +26,19 @@ GameClient::GameClient(const std::string& client_name):
 			{
 				PingMessagePtr ptr = CastBaseMsgTo<PingMessage>(ping_msg_ptr);
 				delay_ms_ = NOW_MS - ptr->timestamp;
+				if (!has_delay_)
+				{
+					std::unique_lock lock(delay_variable_mutex_);
+					has_delay_ = true;
+					delay_variable_.notify_all();
+				}
+
+			});
+	recv_msg_dispatcher_.SetMsgCallback(MessageType::GAME_START,
+			[this](ROLE_ID role_id, const BaseMessagePtr& start_msg)
+			{
+				GameStartMessagePtr ptr = CastBaseMsgTo<GameStartMessage>(start_msg);
+				game_start_promise_.set_value(ptr->timestamp);
 			});
 
 	recv_msg_dispatcher_.Start();
@@ -122,7 +138,18 @@ void GameClient::TestDelay(int32_t role_id)
 	SendMsg(role_id, ping_message_ptr_);
 }
 
-int32_t GameClient::GetDelayMs() const
+uint32_t GameClient::GetDelayMs()
 {
+	if (!has_delay_)
+	{
+		std::unique_lock lock(delay_variable_mutex_);
+		delay_variable_.wait(lock, [this](){return has_delay_;});
+	}
 	return delay_ms_;
+}
+
+uint64_t GameClient::WaitForGameStart(int32_t role_id)
+{
+	auto f = game_start_promise_.get_future();
+	return f.get();
 }

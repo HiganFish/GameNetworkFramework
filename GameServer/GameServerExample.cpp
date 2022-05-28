@@ -1,8 +1,8 @@
+#include <numeric>
 #include "GameServerExample.h"
 #include "Message/Messages.h"
 #include "Utils/TimeUtils.h"
-
-
+#include "Utils/FormatUtils.h"
 
 void GameServerExample::Ping(ROLE_ID role_id, const BaseMessagePtr& msg)
 {
@@ -23,10 +23,20 @@ void GameServerExample::Control(ROLE_ID role_id, const BaseMessagePtr& msg)
 
 		if (role_id == 2)
 		{
+			GameStartMessagePtr start_msg_ptr = SpawnNewMessage<GameStartMessage>();
+			start_msg_ptr->timestamp = NOW_MS;
 			frame_counter_ = 0;
+			SendMessageByRoleIds(role_ids, start_msg_ptr);
+
+			std::string role_ids_str = VectorToString(role_ids);
+			std::cout << fmt::format("game start, player: {}\r\n", role_ids_str);
 		}
 		if (role_id == 3)
 		{
+			GameStartMessagePtr start_msg_ptr = SpawnNewMessage<GameStartMessage>();
+			start_msg_ptr->timestamp = NOW_MS;
+			SendMessageByRoleId(role_id, start_msg_ptr);
+			std::cout << fmt::format("replay to {}\r\n", role_id);
 			RePlay(role_id);
 		}
 	}

@@ -28,6 +28,7 @@ set(MESSAGE_SRC
     Message/MessageUtils.h
     Message/Messages.cpp
     Message/PingMessage.h
+    Message/GameStartMessage.h
 )
 add_library(message ${MESSAGE_SRC})
 target_link_libraries(message PUBLIC buffer)
@@ -36,6 +37,7 @@ target_include_directories(message PUBLIC ${FMT_INCLUDE})
 set(UTILS_SRC
     Utils/TimeUtils.cpp
     Utils/ThreadSafeQueue.h
+    Utils/FormatUtils.h
 )
 add_library(utils ${UTILS_SRC})
 

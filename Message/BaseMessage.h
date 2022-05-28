@@ -13,6 +13,7 @@ enum class MessageType : uint8_t
 	CONTROL,
 	PING,
 	ENTER_ROOM,
+	GAME_START,
 	TYPE_MAX
 };
 
@@ -22,6 +23,7 @@ static std::string MessageTypeToString(MessageType type)
 	{ {MessageType::DEFAULT, "NONE"},
 	{MessageType::PING, "PING"},
 	{MessageType::ENTER_ROOM, "ENTER_ROOM"},
+	{MessageType::GAME_START, "GAME_START"},
 	{MessageType::CONTROL, "CONTROL"}};
 
 	auto iter = enumMap.find(type);

@@ -30,7 +30,14 @@ public:
 	void SendMsg(ROLE_ID role_id, const BaseMessagePtr& msg_ptr);
 
 	void TestDelay(ROLE_ID role_id);
-	int32_t GetDelayMs() const;
+	uint32_t GetDelayMs();
+
+	/**
+	 * wait for game start
+	 * @param role_id player id
+	 * @return server time when game start
+	 */
+	uint64_t WaitForGameStart(ROLE_ID role_id);
 
 private:
 	asio::io_context context_;
@@ -45,6 +52,12 @@ private:
 	std::unordered_map<ROLE_ID, GameConnectionPtr> conn_map_;
 
 	uint32_t delay_ms_;
+	bool has_delay_;
+	std::mutex delay_variable_mutex_;
+	std::condition_variable delay_variable_;
+
+	std::promise<uint64_t> game_start_promise_;
+
 	PingMessagePtr ping_message_ptr_;
 
 	bool running_;

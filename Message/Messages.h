@@ -4,6 +4,7 @@
 #include "ControlMessage.h"
 #include "PingMessage.h"
 #include "EnterRoomMessage.h"
+#include "GameStartMessage.h"
 
 template <typename T, typename...Args>
 std::shared_ptr<T> SpawnNewMessage(Args&&...args)
