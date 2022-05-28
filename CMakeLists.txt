@@ -51,6 +51,7 @@ target_include_directories(network PUBLIC ${FMT_INCLUDE} ${ASIO_INCLUDE})
 
 set(GAME_CLIENT_SRC
     GameClient/GameClient.cpp
+    GameClient/GameController.cpp
 )
 
 set(GAME_SERVER_SRC
