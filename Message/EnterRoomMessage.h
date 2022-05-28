@@ -5,10 +5,12 @@
 class EnterRoomMessage : public BaseMessage
 {
 public:
-	int32_t room_id;
+	uint32_t room_id;
+	int32_t result;
 
 	EnterRoomMessage() :
-		room_id(0)
+		room_id(0),
+		result(0)
 	{
 		message_type = MessageType::ENTER_ROOM;
 	}
@@ -24,12 +26,15 @@ public:
 	DECODE_BODY_FUNC
 	{
 		READ_NUMBER(buffer, room_id);
+		READ_NUMBER(buffer, result);
 	}
 private:
 
 	ENCODE_DATA_FUNC
 	{
 		APPEND_NUMBER(buffer, room_id);
+		APPEND_NUMBER(buffer, result);
 	}
 
 };
+using EnterRoomMessagePtr = std::shared_ptr<EnterRoomMessage>;

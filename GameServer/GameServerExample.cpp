@@ -13,44 +13,42 @@ void GameServerExample::Ping(ROLE_ID role_id, const BaseMessagePtr& msg)
 void GameServerExample::Control(ROLE_ID role_id, const BaseMessagePtr& msg)
 {
 	ControlMessagePtr control_ptr = CastBaseMsgTo<ControlMessage>(msg);
-	if (control_ptr->move_direction == ControlMessage::MoveDirection::NONE)
-	{
-		{
-			std::lock_guard guard(role_ids_mutex_);
-			role_ids.push_back(role_id);
-		}
-		std::cout << fmt::format("add a new role: {}\r\n", role_id);
-
-		if (role_id == 2)
-		{
-			GameStartMessagePtr start_msg_ptr = SpawnNewMessage<GameStartMessage>();
-			start_msg_ptr->timestamp = NOW_MS;
-			frame_counter_ = 0;
-			SendMessageByRoleIds(role_ids, start_msg_ptr);
-
-			std::string role_ids_str = VectorToString(role_ids);
-			std::cout << fmt::format("game start, player: {}\r\n", role_ids_str);
-		}
-		if (role_id == 3)
-		{
-			GameStartMessagePtr start_msg_ptr = SpawnNewMessage<GameStartMessage>();
-			start_msg_ptr->timestamp = NOW_MS;
-			SendMessageByRoleId(role_id, start_msg_ptr);
-			std::cout << fmt::format("replay to {}\r\n", role_id);
-			RePlay(role_id);
-		}
-	}
-	else
-	{
-		// SendMessageByRoleIds(role_ids, msg);
-		std::lock_guard<std::mutex> guard(control_msg_lock_);
-		control_msg_.push_back(msg);
-	}
+	// SendMessageByRoleIds(role_ids, msg);
+	std::lock_guard<std::mutex> guard(control_msg_lock_);
+	control_msg_.push_back(msg);
 }
 
 void GameServerExample::EnterRoom(ROLE_ID role_id, const BaseMessagePtr& msg)
 {
 	std::cout << "EnterRoom\r\n";
+	auto enter_msg = CastBaseMsgTo<EnterRoomMessage>(msg);
+	enter_msg->result = 0;
+
+	{
+		std::lock_guard guard(role_ids_mutex_);
+		role_ids.push_back(role_id);
+	}
+	std::cout << fmt::format("add a new role: {}\r\n", role_id);
+	if (role_id == 2)
+	{
+		GameStartMessagePtr start_msg_ptr = SpawnNewMessage<GameStartMessage>();
+		start_msg_ptr->timestamp = NOW_MS;
+		frame_counter_ = 0;
+		SendMessageByRoleIds(role_ids, start_msg_ptr);
+
+		std::string role_ids_str = VectorToString(role_ids);
+		std::cout << fmt::format("game start, player: {}\r\n", role_ids_str);
+	}
+	if (role_id == 3)
+	{
+		GameStartMessagePtr start_msg_ptr = SpawnNewMessage<GameStartMessage>();
+		start_msg_ptr->timestamp = NOW_MS;
+		SendMessageByRoleId(role_id, start_msg_ptr);
+		std::cout << fmt::format("replay to {}\r\n", role_id);
+		RePlay(role_id);
+	}
+
+	SendMessageByRoleId(role_id, msg);
 }
 
 void GameServerExample::OnRoleDisconnect(int32_t role_id)

@@ -8,13 +8,14 @@ void DefaultMsgCallback(ROLE_ID role_id, BaseMessagePtr msg_ptr)
 }
 
 
-MsgDispatcher::MsgDispatcher(uint32_t thread_num) :
+MsgDispatcher::MsgDispatcher(uint32_t thread_num, bool enable_sync) :
 	started_(false),
 	thread_num_(thread_num),
 	default_message_callback_(DefaultMsgCallback),
 	msg_threads_(),
 	msg_callbacks_(
-		static_cast<int>(MessageType::TYPE_MAX), nullptr)
+		static_cast<int>(MessageType::TYPE_MAX), nullptr),
+	enable_sync_(enable_sync)
 {
 }
 
@@ -77,12 +78,24 @@ void MsgDispatcher::Dispatch(MsgForDispatch& msg)
 {
 	auto msg_ptr = msg.base_message_ptr;
 	auto role_id = msg.dispatch_id;
-	auto func = msg_callbacks_[static_cast<int>(msg_ptr->message_type)];
-	if (!func)
+	auto unique_id = msg_ptr->message_unique_id;
+	if (!enable_sync_ || unique_id == ASYNC_MESSAGE_UNIQUE_ID)
 	{
-		func = default_message_callback_;
+		auto func = msg_callbacks_[static_cast<int>(msg_ptr->message_type)];
+		if (!func)
+		{
+			func = default_message_callback_;
+		}
+		func(role_id, std::move(msg_ptr));
 	}
-	func(role_id, std::move(msg_ptr));
+	else
+	{
+		message_promise_[unique_id].set_value(msg_ptr);
+		{
+			std::lock_guard guard(message_promise_mutex_);
+			message_promise_.erase(unique_id);
+		}
+	}
 }
 
 void MsgDispatcher::SetMsgCallback(MessageType msg_type, const MsgCallback& callback)
@@ -95,4 +108,17 @@ void MsgDispatcher::SetMsgCallback(MessageType msg_type, const MsgCallback& call
 void MsgDispatcher::SetDefaultMsgCallback(const MsgCallback& callback)
 {
 	default_message_callback_ = callback;
+}
+
+std::future<BaseMessagePtr> MsgDispatcher::SetSyncMessageId(int32_t role_id, const BaseMessagePtr& message)
+{
+	auto unique_id = ++message_id_map_[role_id];
+	message->message_unique_id = unique_id;
+
+	std::future<BaseMessagePtr> future;
+	{
+		std::lock_guard guard(message_promise_mutex_);
+		future = message_promise_[unique_id].get_future();
+	}
+	return future;
 }

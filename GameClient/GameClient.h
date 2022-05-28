@@ -27,7 +27,9 @@ public:
 
 	void SetMsgCallback(MessageType type, const MsgDispatcher::MsgCallback& callback);
 
-	void SendMsg(ROLE_ID role_id, const BaseMessagePtr& msg_ptr);
+	void SendMsgAsync(ROLE_ID role_id, const BaseMessagePtr& msg_ptr);
+
+	BaseMessagePtr SendMsgSync(ROLE_ID role_id, const BaseMessagePtr& msg_ptr);
 
 	void TestDelay(ROLE_ID role_id);
 	uint32_t GetDelayMs();
@@ -38,6 +40,8 @@ public:
 	 * @return server time when game start
 	 */
 	uint64_t WaitForGameStart(ROLE_ID role_id);
+
+	bool EnterRoom(ROLE_ID role_id, uint32_t room_id);
 
 private:
 	asio::io_context context_;

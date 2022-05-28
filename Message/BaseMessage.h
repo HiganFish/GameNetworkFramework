@@ -35,6 +35,7 @@ struct BaseMessage
 public:
 
 	uint32_t magic;
+	uint32_t message_unique_id;
 	ROLE_ID role_id;
 	uint8_t version;
 	MessageType message_type;
@@ -55,7 +56,8 @@ public:
 private:
 
 	const static int MAX_PACK_SIZE = 4 * 1024;;
-	const static int HEADER_SIZE_NO_LENGTH = sizeof(magic) +
+	const static int HEADER_SIZE_NO_LENGTH = sizeof(message_unique_id) +
+			sizeof(magic) +
 		sizeof(role_id) + 
 		sizeof(version) + sizeof(ENUM_TO_NUM(message_type));
 	const static int MAGIC = 0x11000011;

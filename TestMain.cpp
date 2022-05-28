@@ -71,7 +71,7 @@ void FooClient(GameClient& client)
 				for (int player_sub = 0; player_sub < PLAYER_NUM; ++player_sub)
 				{
 					ping_message_ptr->timestamp = NOW_MS;
-					client.SendMsg(std::to_string(player_sub), ping_message_ptr);
+					client.SendMsgAsync(std::to_string(player_sub), ping_message_ptr);
 				}
 			}
 			auto frame_end_time = NOW_MS;

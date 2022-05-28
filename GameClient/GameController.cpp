@@ -24,7 +24,7 @@ void GameController::PushInput(int role_id, int logic_frame, MoveDirection direc
 	control_message_ptr_->tick = logic_frame;
 	control_message_ptr_->role_id = role_id;
 	control_message_ptr_->move_direction = direction;
-	game_client_ptr_->SendMsg(role_id, control_message_ptr_);
+	game_client_ptr_->SendMsgAsync(role_id, control_message_ptr_);
 }
 
 void GameController::PopInput(int current_logic_frame, std::vector<Input>& result)

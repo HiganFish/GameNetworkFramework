@@ -13,7 +13,7 @@ GameClient::GameClient(const std::string& client_name):
 		client_guard_(asio::make_work_guard(context_)),
 		client_name_(client_name),
 		conn_map_(),
-		recv_msg_dispatcher_(1),
+		recv_msg_dispatcher_(1, true),
 		delay_ms_(0),
 		ping_message_ptr_(nullptr),
 		running_(true),
@@ -112,7 +112,7 @@ void GameClient::SetMsgCallback(MessageType type, const MsgDispatcher::MsgCallba
 	recv_msg_dispatcher_.SetMsgCallback(type, callback);
 }
 
-void GameClient::SendMsg(ROLE_ID role_id, const BaseMessagePtr& msg_ptr)
+void GameClient::SendMsgAsync(ROLE_ID role_id, const BaseMessagePtr& msg_ptr)
 {
 	auto conn = conn_map_.find(role_id);
 	if (conn != conn_map_.end())
@@ -135,7 +135,7 @@ void GameClient::TestDelay(int32_t role_id)
 	}
 	ping_message_ptr_->role_id = role_id;
 	ping_message_ptr_->timestamp = NOW_MS;
-	SendMsg(role_id, ping_message_ptr_);
+	SendMsgAsync(role_id, ping_message_ptr_);
 }
 
 uint32_t GameClient::GetDelayMs()
@@ -152,4 +152,21 @@ uint64_t GameClient::WaitForGameStart(int32_t role_id)
 {
 	auto f = game_start_promise_.get_future();
 	return f.get();
+}
+
+BaseMessagePtr GameClient::SendMsgSync(int32_t role_id, const BaseMessagePtr& msg_ptr)
+{
+	auto future = recv_msg_dispatcher_.SetSyncMessageId(role_id, msg_ptr);
+	SendMsgAsync(role_id, msg_ptr);
+	return future.get();
+}
+
+bool GameClient::EnterRoom(ROLE_ID role_id, uint32_t room_id)
+{
+	EnterRoomMessagePtr msg = SpawnNewMessage<EnterRoomMessage>();
+	msg->role_id = role_id;
+	msg->room_id = room_id;
+	auto base_rsp = SendMsgSync(role_id, msg);
+	EnterRoomMessagePtr rsp = CastBaseMsgTo<EnterRoomMessage>(base_rsp);
+	return rsp->result == 0;
 }

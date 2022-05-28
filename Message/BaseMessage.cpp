@@ -4,6 +4,7 @@
 
 BaseMessage::BaseMessage() :
 	magic(MAGIC),
+	message_unique_id(0),
 	role_id(0),
 	version(0x00),
 	message_type(MessageType::DEFAULT)
@@ -12,6 +13,7 @@ BaseMessage::BaseMessage() :
 
 BaseMessage::BaseMessage(BaseMessage&& old_message) noexcept :
 	magic(old_message.magic),
+	message_unique_id(old_message.message_unique_id),
 	role_id(old_message.role_id),
 	version(old_message.version),
 	message_type(old_message.message_type)
@@ -22,6 +24,7 @@ void BaseMessage::EncodeMessage(Buffer& buffer)
 {
 	size_t old_size = buffer.ReadableSize();
 	APPEND_NUMBER(buffer, magic);
+	APPEND_NUMBER(buffer, message_unique_id);
 	APPEND_NUMBER(buffer, role_id);
 	APPEND_NUMBER(buffer, version);
 	APPEND_ENUM(buffer, message_type);
@@ -63,6 +66,7 @@ std::pair<bool, uint32_t> BaseMessage::DecodeMessageHeader(Buffer& buffer, uint3
 	}
 	buffer.AddReadIndex(sizeof(magic));
 
+	READ_NUMBER(buffer, message_unique_id);
 	READ_NUMBER(buffer, role_id);
 	READ_NUMBER(buffer, version);
 	READ_ENUM(buffer, message_type);
