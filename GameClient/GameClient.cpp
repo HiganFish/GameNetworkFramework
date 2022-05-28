@@ -17,7 +17,7 @@ GameClient::GameClient(const std::string& client_name):
 		delay_ms_(0),
 		ping_message_ptr_(nullptr),
 		running_(true),
-		has_delay_(true)
+		has_delay_(false)
 {
 	run_thread_ = std::thread([this](){context_.run();});
 

@@ -109,12 +109,10 @@ private:
 #define READ_NUMBER(buffer, var) var = buffer.ReadNumber<decltype(var)>()
 #define PEEK_NUMBER(buffer, var) var = buffer.PeekNumber<decltype(var)>()
 
-#if __cplusplus > 202002L
-#define ENUM_TO_NUM(e) std::to_underlying(e)
-#define APPEND_ENUM(buffer, e) APPEND_NUMBER(buffer, ENUM_TO_NUM(e))
-#define READ_ENUM(buffer, var) var = static_cast<decltype(var)>(buffer.ReadNumber<decltype(std::to_underlying(var))>())
-#else
+//#define ENUM_TO_NUM(e) std::to_underlying(e)
+//#define APPEND_ENUM(buffer, e) APPEND_NUMBER(buffer, ENUM_TO_NUM(e))
+//#define READ_ENUM(buffer, var) var = static_cast<decltype(var)>(buffer.ReadNumber<decltype(std::to_underlying(var))>())
+
 #define ENUM_TO_NUM(e) static_cast<int>(e)
 #define APPEND_ENUM(buffer, e) APPEND_NUMBER(buffer, ENUM_TO_NUM(e))
 #define READ_ENUM(buffer, var) var = static_cast<decltype(var)>((buffer).ReadNumber<int>())
-#endif

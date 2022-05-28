@@ -73,7 +73,7 @@ private:
 	asio::ip::tcp::socket client_socket_;
 #endif
 
-	awaitable_void OnNewClient(asio::ip::tcp::socket socket)
+	void OnNewClient(asio::ip::tcp::socket socket)
     {
         try
         {
@@ -92,19 +92,10 @@ private:
         {
             std::printf("Exception: %s\n", e.what());
         }
-        co_return;
     }
 
-	awaitable_void Listener()
+	void Listener()
     {
-#if __cplusplus > 202002L
-		auto executor = co_await this_coro::executor;
-        for (;;)
-        {
-	        asio::ip::tcp::socket socket = co_await acceptor.async_accept(use_awaitable);
-            co_spawn(socket.get_executor(), OnNewClient(std::move(socket)), detached);
-        }
-#else
 		acceptor_.async_accept(client_socket_,
 				[this](std::error_code ec)
 		{
@@ -114,7 +105,5 @@ private:
 			}
 			Listener();
 		});
-#endif
     }
-
 };

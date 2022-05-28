@@ -2,7 +2,7 @@
 
 #include <climits>
 
-constexpr bool IsLittleEndian()
+static bool IsLittleEndian()
 {
     union Foo
     {
@@ -34,11 +34,13 @@ T swap_endian(T u)
 template <typename T>
 T ntoh(T u)
 {
-    return IsLittleEndian() ? swap_endian(u) : u;
+	static bool is_little_endian = IsLittleEndian();
+    return is_little_endian ? swap_endian(u) : u;
 }
 
 template <typename T>
 T hton(T u)
 {
-    return IsLittleEndian() ? swap_endian(u) : u;
+	static bool is_little_endian = IsLittleEndian();
+    return is_little_endian ? swap_endian(u) : u;
 }
