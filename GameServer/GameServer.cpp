@@ -79,7 +79,7 @@ void GameServer::SendMessageById(ROLE_ID role_id, const char* data, size_t lengt
 	}
 	else
 	{
-		std::cout << fmt::format("unknown role_id: {}\r\n", role_id);
+		LOG_INFO <<"unknown role_id: "<< role_id;
 	}
 }
 

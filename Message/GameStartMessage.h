@@ -19,7 +19,7 @@ public:
 	DEBUG_MSG_FUNC
 	{
 		return BaseMessage::DebugMessage(
-			fmt::format("timestamp: {}", timestamp));
+			string_format("timestamp: %zu", timestamp));
 	}
 
 	DECODE_BODY_FUNC

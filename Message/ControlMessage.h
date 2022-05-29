@@ -41,9 +41,9 @@ struct ControlMessage : public BaseMessage
 	DEBUG_MSG_FUNC
 	{
 		return BaseMessage::DebugMessage(
-			fmt::format("tick : {}, move_direction : {}",
+			string_format("tick : %d, move_direction : %s",
 				tick,
-				ControlTypeToString(move_direction)));
+				ControlTypeToString(move_direction).c_str()));
 	}
 
 	DECODE_BODY_FUNC

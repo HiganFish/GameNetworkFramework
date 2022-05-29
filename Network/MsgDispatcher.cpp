@@ -1,10 +1,11 @@
 #include <iostream>
+#include <Utils/Logger.h>
 #include "MsgDispatcher.h"
 
 void DefaultMsgCallback(ROLE_ID role_id, BaseMessagePtr msg_ptr)
 {
-	std::cout << fmt::format("default msg callback {}-{}\r\n",
-		role_id, msg_ptr->DebugMessage());
+	LOG_INFO << "default msg callback " << role_id << "-" <<
+		msg_ptr->DebugMessage();
 }
 
 

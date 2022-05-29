@@ -17,10 +17,10 @@ public:
 
 	DECODE_CONSTRUCTOR(EnterRoomMessage)
 
-		DEBUG_MSG_FUNC
+	DEBUG_MSG_FUNC
 	{
 		return BaseMessage::DebugMessage(
-			fmt::format("room_id: {}", room_id));
+			string_format("room_id: %d", room_id));
 	}
 
 	DECODE_BODY_FUNC

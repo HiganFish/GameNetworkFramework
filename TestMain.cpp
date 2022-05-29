@@ -1,6 +1,7 @@
 #include "GameServer/GameServerExample.h"
 #include "GameClient/GameClient.h"
 #include "Utils/TimeUtils.h"
+#include "Utils/Logger.h"
 
 void EncodeTest()
 {
@@ -117,7 +118,7 @@ void GameServerTest()
 		    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 			std::cout << count << std::endl;
 	    }
-	    std::cout << fmt::format("ping-{}: avg {}ms\r\n",
+	    LOG_INFO << string_format("ping-%d: avg %fms",
 			    count, static_cast<float>(sum_delay) / count);
 
 	    server.Stop();

@@ -28,7 +28,7 @@ void GameServerExample::EnterRoom(ROLE_ID role_id, const BaseMessagePtr& msg)
 		std::lock_guard guard(role_ids_mutex_);
 		role_ids.push_back(role_id);
 	}
-	std::cout << fmt::format("add a new role: {}\r\n", role_id);
+	LOG_INFO << "add a new role: " << role_id;
 	if (role_id == 2)
 	{
 		GameStartMessagePtr start_msg_ptr = SpawnNewMessage<GameStartMessage>();
@@ -36,15 +36,14 @@ void GameServerExample::EnterRoom(ROLE_ID role_id, const BaseMessagePtr& msg)
 		frame_counter_ = 0;
 		SendMessageByRoleIds(role_ids, start_msg_ptr);
 
-		std::string role_ids_str = VectorToString(role_ids);
-		std::cout << fmt::format("game start, player: {}\r\n", role_ids_str);
+		LOG_INFO << "game start, player: " << role_ids;
 	}
 	if (role_id == 3)
 	{
 		GameStartMessagePtr start_msg_ptr = SpawnNewMessage<GameStartMessage>();
 		start_msg_ptr->timestamp = NOW_MS;
 		SendMessageByRoleId(role_id, start_msg_ptr);
-		std::cout << fmt::format("replay to {}\r\n", role_id);
+		LOG_INFO << "replay to " << role_id;
 		RePlay(role_id);
 	}
 
@@ -66,7 +65,7 @@ void GameServerExample::OnRoleDisconnect(int32_t role_id)
 			role_ids.erase(iter);
 		}
 	}
-	std::cout << fmt::format("remove a role: {}\r\n", role_id);
+	LOG_INFO << "remove a role: " << role_id;
 }
 
 

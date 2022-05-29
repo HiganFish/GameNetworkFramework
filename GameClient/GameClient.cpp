@@ -3,7 +3,6 @@
 //
 #include <thread>
 #include <condition_variable>
-#include <fmt/format.h>
 #include "GameClient.h"
 #include "Message/Messages.h"
 #include "Utils/TimeUtils.h"
@@ -87,8 +86,8 @@ TcpConnectionPtr GameClient::Connect(const std::string& address, const std::stri
 	asio::connect(sock, endpoint, ec);
 	if (ec)
 	{
-		std::cout << fmt::format("connect to {}:{} failed, {}",
-				address, port, ec.message()) << std::endl;
+		LOG_INFO << string_format("connect to %s:%s failed, %s",
+				address.c_str(), port.c_str(), ec.message().c_str());
 		return nullptr;
 	}
 	else
@@ -123,7 +122,7 @@ void GameClient::SendMsgAsync(ROLE_ID role_id, const BaseMessagePtr& msg_ptr)
 	}
 	else
 	{
-		std::cout << fmt::format("conn: {} not exist", role_id) << std::endl;
+		LOG_INFO << "conn: "<< role_id << " not exist";
 	}
 }
 

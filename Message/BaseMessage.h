@@ -2,9 +2,9 @@
 
 #include <string>
 #include <memory>
-#include <fmt/format.h>
 #include <unordered_map>
 #include "MessageUtils.h"
+#include "Utils/Logger.h"
 
 enum class MessageType : uint8_t
 {

@@ -89,9 +89,9 @@ std::string BaseMessage::DebugMessage(const std::string& body) const
 {
 	if (body.empty())
 	{
-		return fmt::format("[ version: {}, role_id: {}, message_type: {} ]",
-				version, role_id, MessageTypeToString(message_type), body);
+		return string_format("[ version: %d, role_id: %d, message_type: %s ]",
+				version, role_id, MessageTypeToString(message_type).c_str());
 	}
-	return fmt::format("[ version: {}, role_id: {}, message_type: {} ] - {}",
-		version, role_id, MessageTypeToString(message_type), body);
+	return string_format("[ version: %d, role_id: %d, message_type: %s ] - %s",
+		version, role_id, MessageTypeToString(message_type).c_str(), body.c_str());
 }
